@@ -2308,9 +2308,9 @@ function Getnamegame()
     end
 end
 
-local win = DiscordLib:Window("Kripton Hub | "..Getnamegame())
+local win = DiscordLib:Window("Kiev Hub | "..Getnamegame())
 
-local serv = win:Server("Lago x Ray", "")
+local serv = win:Server("Lago", "")
 
 local btns = serv:Channel("Buttons")
 
@@ -2419,5 +2419,3 @@ bnds:Bind(
         print("Killed everyone!")
     end
 )
-
-serv:Channel("by dawid#7205")
