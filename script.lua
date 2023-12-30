@@ -154,7 +154,7 @@ spawn(function()
 				for i,v in pairs(GuideModule.Data.NPCList) do
 					if v.NPCName == GuideModule.Data.LastClosestNPC then
 						repeat task.wait()
-							totarget(computed_quest[v.NpcName])
+							totarget(computed_quest[tostring(v.NpcName)])
 						until Distance(CFrame.new(computed_quest[v.NpcName]).Position) <= 120
 						if Distance(CFrame.new(computed_quest[v.NpcName]).Position) <= 50 then
 							Questrun("BanditQuest1",1)
