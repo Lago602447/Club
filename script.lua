@@ -1,29 +1,11 @@
+getgenv().Settings = true
+
+
 local LocalPlayer = game.Players.LocalPlayer
-local Plr = game.Players.LocalPlayer
-local Rigc = getupvalue(require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework),2)
-local CombatFrameworkR = getupvalues(require(Plr.PlayerScripts.CombatFramework))[2]
-local cooldownfastattack = tick()
---local CameraShaker = require(LocalPlayer.PlayerScripts.CombatFramework.CameraShaker.CameraShakeInstance)
-local PC = require(LocalPlayer.PlayerScripts.CombatFramework.Particle)
-local RL = require(game:GetService("ReplicatedStorage").CombatFramework.RigLib)
-local DMG = require(LocalPlayer.PlayerScripts.CombatFramework.Particle.Damage)
-local cd = 0
-local Quest = require(game:GetService("ReplicatedStorage").Quests)
+local FirstSea,SecondSea,ThirdSea
 local GuideModule = require(game:GetService("ReplicatedStorage").GuideModule)
-local Queue = require(game:GetService("ReplicatedStorage").Queue)
-local Collection = game:GetService("CollectionService")
-local NPCList = getupvalues(Queue.new)[1][1].NPCDialogueEnabler.bin
-local QuestNpc = {}
-getgenv().PastQuest = 1
-local computed_quest = {}
-local quest_fordropdown = {}
-do -- Init
-	task = task or getrenv().task;
-	fastSpawn,fastWait,delay = task.spawn,task.wait,task.delay
-end
-local FirstSea
-local SecondSea
-local ThirdSea
+local LevelQuest,IndexQuest
+getgenv().CFrameQuest = nil
 if game.PlaceId == 2753915549 then
 	FirstSea = true
 elseif game.PlaceId == 4442272183 then
@@ -31,81 +13,29 @@ elseif game.PlaceId == 4442272183 then
 elseif game.PlaceId == 7449423635 then
 	ThirdSea = true
 end
-if not shared.orl then shared.orl = RL.wrapAttackAnimationAsync end
-if not shared.cpc then shared.cpc = PC.play end
-if not shared.dnew then shared.dnew = DMG.new end
-for i,v in pairs(NPCList) do
-	local Model = v.Model
-	if Model:FindFirstChild("QuestFloor",true) then
-		QuestNpc[Model.Name] = v
-		QuestNpc[Model.Name].lowername = Model.Name:lower()
+function CheckLevel(LEVEL)
+	local Level = LEVEL or LocalPlayer.Data.Level.Value
+	for i,v in pairs(GuideModule.Data.NPCList) do
+		if v.NPCName == GuideModule.Data.LastClosestNPC then
+			CFrameQuest = CFrame.new(v.Position)
+		end
 	end
-end
-for i,v in pairs(QuestNpc) do
-	computed_quest[v.Model.Name] = v.Model.Head.CFrame
-end
-for i,v in pairs(computed_quest) do
-	table.insert(quest_fordropdown,i)
-end
-
-function AddTag(Obj,Tag)
-    if not Collection:HasTag(Obj,Tag) then
-        Collection:AddTag(Obj,Tag)
-    end
-end
-function GetAllMob()
-	return Collection:GetTagged("ActiveRig")
-end
-function GetMobName()
-	if game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible then
-		local Text = LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text:split(" ")
-		local RealText = ""
-		local List = #Text
-		local Is = true
-		if Text[List]:find("/1)") then
-			Is = false
+	if FirstSea then
+		if Level == 1 and Level <= 10 then
+			LevelQuest = "BanditQuest1"
+			IndexQuest = 1
 		end
-		table.remove(Text,1)
-		table.remove(Text,1)
-		table.remove(Text,#Text)
-		for i=1,#Text do local v = Text[i]
-			RealText = RealText..v
-			if #Text ~= i then
-				RealText = RealText.." "
-			end
-		end
-		if Is then
-			RealText = RealText:sub(1,#RealText-1)
-		end
-		return RealText
 	end
-end
-function Attack()
-	spawn(function()
-		pcall(function()
-			local Controller = Rigc.activeController
-			if Controller and tick() >= cd then
-				cd = tick() + 0.1
-				Controller:attack()
-			end
-		end)
-	end)
-end
-function Maxincrement()
-	local maxincrement = #Rigc.activeController.anims.basic
-	return maxincrement
-end
-function Distance(POS)
-	return LocalPlayer:DistanceFromCharacter(POS)
 end
 function IsQuest(bool)
     return game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible == (bool or true)
 end
+function Distance(POS)
+    return LocalPlayer:DistanceFromCharacter(POS)
+end
 function totarget(CFgo)
-
     local Dis = Distance(CFgo.Position)
     if not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
-
     if Dis < 1000 then
         Speed = 400
     elseif Dis >= 1000 then
@@ -135,7 +65,7 @@ function totarget(CFgo)
     end
     
 end
-function Questrun(name,index)
+function RunremoteQuest(name,index)
 	local args = {
 		[1] = "StartQuest",
 		[2] = name,
@@ -145,24 +75,20 @@ function Questrun(name,index)
 	game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
 end
 
-getgenv().Settings = not getgenv().Settings
-
 spawn(function()
-	while task.wait() do
-		if getgenv().Settings then
-			if not IsQuest(true) then
-				for i,v in pairs(GuideModule.Data.NPCList) do
-					if v.NPCName == GuideModule.Data.LastClosestNPC then
-						repeat task.wait()
-							totarget(computed_quest[tostring(v.NpcName)])
-						until Distance(CFrame.new(computed_quest[v.NpcName]).Position) <= 120
-						if Distance(CFrame.new(computed_quest[v.NpcName]).Position) <= 50 then
-							Questrun("BanditQuest1",1)
-							repeat wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
-						end
-					end
-				end
-			end
-		end
-	end
+    while task.wait() do
+        if getgenv().Settings then
+            CheckLevel()
+            if not IsQuest(true) then
+                repeat task.wait()
+                    totarget(CFrameQuest)
+                until Distance(CFrameQuest.Position) <= 120
+                task.wait(0.59)
+                if Distance(CFrameQuest.Position) <= 50 then
+                    RunremoteQuest(LevelQuest,IndexQuest)
+                    repeat wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
+                end
+            end
+        end
+    end
 end)
