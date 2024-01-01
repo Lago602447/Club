@@ -3993,11 +3993,13 @@ function EquipWeapon(Tools)
         end
     end
 end
+
+
 function BringMob(mob)
 	local Mob = workspace.Enemies:GetChildren()
 	for i,v in pairs(Mob) do
 		if v.Name == mob.Name and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
-            local CFrameTo = mob.HumanoidRootPart.CFrame
+			local CFrameTo = mob.HumanoidRootPart.CFrame
             v.HumanoidRootPart.CFrame = CFrameTo
             v.HumanoidRootPart.Size = Vector3.new(70,70,70)
             v.Humanoid.PlatformStand = true
@@ -4020,9 +4022,7 @@ function totarget(CFgo,Name)
     getgenv().SpawnCheck = false
     local Level = game.Players.LocalPlayer.Data.Level.Value
     local Dis = Distance(CFgo.Position)
-	if Name ~= nil then
-    	local PlayerSpawns = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[Name].Part
-	end
+	local PlayerSpawns = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[Name].Part
     local Data = game:GetService("Players").LocalPlayer.Data
     local World = {
         Second = 4442272183,
@@ -4041,19 +4041,19 @@ function totarget(CFgo,Name)
     elseif Dis >= 1000 then
         Speed = 350
     end
-	if Name ~= nil then
-		if Data.SpawnPoint.Value == Name then
-			getgenv().SpawnCheck = true 
-		elseif Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-			getgenv().SpawnCheck = true
-		elseif game.placeId == World["Second"] and Distance(PlayerSpawns.Position) < Distank[1] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-			getgenv().SpawnCheck = true
-		elseif game.placeId == World["First"] and Distance(PlayerSpawns.Position) < Distank[2] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-			getgenv().SpawnCheck = true
-		elseif game.placeId == World["Third"] and Distance(PlayerSpawns.Position) < Distank[3] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-			getgenv().SpawnCheck = true
-		end
+	
+	if Data.SpawnPoint.Value == Name then
+		getgenv().SpawnCheck = true 
+	elseif Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+		getgenv().SpawnCheck = true
+	elseif game.placeId == World["Second"] and Distance(PlayerSpawns.Position) < Distank[1] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+		getgenv().SpawnCheck = true
+	elseif game.placeId == World["First"] and Distance(PlayerSpawns.Position) < Distank[2] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+		getgenv().SpawnCheck = true
+	elseif game.placeId == World["Third"] and Distance(PlayerSpawns.Position) < Distank[3] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+		getgenv().SpawnCheck = true
 	end
+	
 
     for i,v in pairs(game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates:GetChildren()) do
         if Data.SpawnPoint.Value == v.Name then
@@ -4073,7 +4073,7 @@ function totarget(CFgo,Name)
         end
     end
 
-    if getgenv().SpawnCheck == false and Name ~= nil then
+    if getgenv().SpawnCheck == false then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0,1000,0)
         task.wait(1)
         game.Players.LocalPlayer.Character.Humanoid.Health = 0
@@ -4108,6 +4108,41 @@ function totarget(CFgo,Name)
             game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
         end
     end
+end
+
+function tweento(CFgo)
+
+    local Dis = Distance(CFgo.Position)
+    if not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
+
+    if Dis < 1000 then
+        Speed = 400
+    elseif Dis >= 1000 then
+        Speed = 350
+    end
+
+    if Dis > 430 then
+        local tween_s = game:service"TweenService"
+        local info = TweenInfo.new(Dis/Speed, Enum.EasingStyle.Linear)
+        local tween, err = pcall(function()
+            _G.Teleporting = true
+            tween = tween_s:Create(LocalPlayer.Character.HumanoidRootPart, info, {CFrame = CFgo})
+            tween:Play()
+            repeat
+                task.wait() 
+            until Distance(CFgo.Position) <= 430 or not _G.Teleporting
+            tween:Cancel()
+            _G.Teleporting = false
+            task.wait(0.8)
+            if Distance(CFgo.Position) <= 430 then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
+            end
+        end)
+        if not tween then return err end
+    else
+        LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
+    end
+    
 end
 
 function checkQuest(method)
@@ -4496,7 +4531,7 @@ spawn(function()
 					repeat wait() until game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible
 				end
 			elseif IsQuest() then
-				local Mob = GetAllMob()
+				local Mob = GetMobName()
 				for i,v in pairs(GetAllMob()) do
 					if Mob and v.Name:lower():sub(1,#Mob) == Mob:lower() and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
 						repeat wait()
@@ -4506,7 +4541,7 @@ spawn(function()
 							else
 								EquipWeapon("Melee")
 							end
-							totarget(v.HumanoidRootPart.CFrame * CFrame.new(0,30,0))
+							tweento(v.HumanoidRootPart.CFrame * CFrame.new(0,30,0))
 							pcall(function()
 								Rigc.activeController:attack()
 							end)
@@ -4515,14 +4550,62 @@ spawn(function()
 							if sethiddenproperty then
 								sethiddenproperty(game.Players.LocalPlayer,"SimulationRadius",math.huge)
 							end
-						until 
-						not getgenv().Settings["Main"]["AutoFarm"] or v.Humanoid.Health <= 0 or not v.Parent
+						until not getgenv().Settings["Main"]["AutoFarm"] or v.Humanoid.Health <= 0 or not v.Parent or not IsQuest()
 					end
 				end
 			end
 		end
 	end
 end)
+spawn(function()
+	while task.wait() do
+		if getgenv().Settings["Main"]["AutoFarm"] then
+			pcall(function()
+				Rigc.activeController.timeToNextAttack = 0
+				Rigc.activeController.hitboxMagnitude = 50
+				Rigc.activeController.focusStart = 0
+				Rigc.activeController.blocking = false
+				Rigc.activeController.attacking = false
+				Rigc.activeController.humanoid.AutoRotate = true
+                Rigc.activeController.increment = #Rigc.activeController.anims.basic
+				if Rigc.activeController.data then
+					Rigc.activeController.data.attackStartCallback = function()end
+				end
+			end)
+		end
+	end
+end)
 
+task.spawn(function()
+	game:GetService("RunService").Stepped:Connect(function()
+		pcall(function()
+			if 
+            getgenv().Settings["Main"]["AutoFarm"] 
+            then
+				if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+					if not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyVelocity1") then
+						if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
+							game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit = false
+						end
+						local BodyVelocity = Instance.new("BodyVelocity")
+						BodyVelocity.Name = "BodyVelocity1"
+						BodyVelocity.Parent =  game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+						BodyVelocity.MaxForce = Vector3.new(10000, 10000, 10000)
+						BodyVelocity.Velocity = Vector3.new(0, 0, 0)
+					end
+				end
+				for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+					if v:IsA("BasePart") then
+						v.CanCollide = false    
+					end
+				end
+			else
+				if game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyVelocity1") then
+					game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyVelocity1"):Destroy();
+				end
+			end
+		end)
+	end)
+end)
 
--- loadstring(game:HttpGet("https://raw.githubusercontent.com/Lago602447/Club/main/script.lua"))()
+-- loadstring(game:HttpGet("https://raw.githubusercontent.com/Lago602447/Club/main/scripts.lua"))()
