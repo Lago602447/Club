@@ -3993,11 +3993,14 @@ function EquipWeapon(Tools)
         end
     end
 end
+
+print(isnetworkowner(game.Players.LocalPlayer.Character.HumanoidRootPart))
+
 function BringMob(mob)
 	local Mob = workspace.Enemies:GetChildren()
 	for i,v in pairs(Mob) do
 		if v.Name == mob.Name and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
-            local CFrameTo = mob.HumanoidRootPart.CFrame
+			local CFrameTo = mob.HumanoidRootPart.CFrame
             v.HumanoidRootPart.CFrame = CFrameTo
             v.HumanoidRootPart.Size = Vector3.new(70,70,70)
             v.Humanoid.PlatformStand = true
@@ -4548,10 +4551,31 @@ spawn(function()
 							if sethiddenproperty then
 								sethiddenproperty(game.Players.LocalPlayer,"SimulationRadius",math.huge)
 							end
-						until not getgenv().Settings["Main"]["AutoFarm"] or v.Humanoid.Health <= 0 or not v.Parent
+						until not getgenv().Settings["Main"]["AutoFarm"] or v.Humanoid.Health <= 0 or not v.Parent or not IsQuest()
 					end
 				end
 			end
+		end
+	end
+end)
+spawn(function()
+	while task.wait() do
+		if getgenv().Settings["Main"]["AutoFarm"] and getgenv().UseFast then
+			pcall(function()
+				Rigc.activeController.timeToNextAttack = 0
+				Rigc.activeController.hitboxMagnitude = 50
+				Rigc.activeController.focusStart = 0
+				Rigc.activeController.blocking = false
+				Rigc.activeController.attacking = false
+				Rigc.activeController.humanoid.AutoRotate = true
+                if getgenv().SettingSave["SettingsFarm"]["AlwaysCritical"] then
+				    Rigc.activeController.increment = #Rigc.activeController.anims.basic
+                end
+				if Rigc.activeController.data then
+					Rigc.activeController.data.attackStartCallback = function()end
+				end
+				Attack()
+			end)
 		end
 	end
 end)
