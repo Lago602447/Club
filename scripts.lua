@@ -4522,14 +4522,16 @@ spawn(function()
 	while task.wait() do
 		if getgenv().Settings["Main"]["AutoFarm"] then
 			if not IsQuest() then
-				repeat task.wait()
-					totarget(checkQuest("GetPosition"),checkQuest("Quest").Spawn)
-				until Distance(checkQuest("GetPosition").Position) <= 120
-				task.wait(0.68)
-				if Distance(checkQuest("GetPosition").Position) <= 50 then
-					AcceptQuest(checkQuest("Quest").NameQuest,checkQuest("Quest").LevelQuest)
-					repeat wait() until game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible
-				end
+				pcall(function()
+					repeat task.wait()
+						totarget(checkQuest("GetPosition"),checkQuest("Quest").Spawn)
+					until Distance(checkQuest("GetPosition").Position) <= 120
+					task.wait(0.68)
+					if Distance(checkQuest("GetPosition").Position) <= 50 then
+						AcceptQuest(checkQuest("Quest").NameQuest,checkQuest("Quest").LevelQuest)
+						repeat wait() until game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible
+					end
+				end)
 			elseif IsQuest() then
 				local Mob = GetMobName()
 				for i,v in pairs(GetAllMob()) do
@@ -4558,5 +4560,36 @@ spawn(function()
 	end
 end)
 
+task.spawn(function()
+	game:GetService("RunService").Stepped:Connect(function()
+		pcall(function()
+			if 
+            getgenv().Settings["Main"]["AutoFarm"] 
+            then
+				if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+					if not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyVelocity1") then
+						if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
+							game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit = false
+						end
+						local BodyVelocity = Instance.new("BodyVelocity")
+						BodyVelocity.Name = "BodyVelocity1"
+						BodyVelocity.Parent =  game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+						BodyVelocity.MaxForce = Vector3.new(10000, 10000, 10000)
+						BodyVelocity.Velocity = Vector3.new(0, 0, 0)
+					end
+				end
+				for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+					if v:IsA("BasePart") then
+						v.CanCollide = false    
+					end
+				end
+			else
+				if game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyVelocity1") then
+					game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyVelocity1"):Destroy();
+				end
+			end
+		end)
+	end)
+end)
 
 -- loadstring(game:HttpGet("https://raw.githubusercontent.com/Lago602447/Club/main/scripts.lua"))()
