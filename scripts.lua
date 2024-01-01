@@ -4110,6 +4110,41 @@ function totarget(CFgo,Name)
     end
 end
 
+function tweento(CFgo)
+
+    local Dis = Distance(CFgo.Position)
+    if not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
+
+    if Dis < 1000 then
+        Speed = 400
+    elseif Dis >= 1000 then
+        Speed = 350
+    end
+
+    if Dis > 430 then
+        local tween_s = game:service"TweenService"
+        local info = TweenInfo.new(Dis/Speed, Enum.EasingStyle.Linear)
+        local tween, err = pcall(function()
+            _G.Teleporting = true
+            tween = tween_s:Create(LocalPlayer.Character.HumanoidRootPart, info, {CFrame = CFgo})
+            tween:Play()
+            repeat
+                task.wait() 
+            until Distance(CFgo.Position) <= 430 or not _G.Teleporting
+            tween:Cancel()
+            _G.Teleporting = false
+            task.wait(0.8)
+            if Distance(CFgo.Position) <= 430 then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
+            end
+        end)
+        if not tween then return err end
+    else
+        LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
+    end
+    
+end
+
 function checkQuest(method)
 	local Npc = require(game:GetService("ReplicatedStorage").GuideModule)
 	local Level = game.Players.LocalPlayer.Data.Level.Value
@@ -4506,7 +4541,7 @@ spawn(function()
 							else
 								EquipWeapon("Melee")
 							end
-							totarget(v.HumanoidRootPart.CFrame * CFrame.new(0,30,0))
+							tweento(v.HumanoidRootPart.CFrame * CFrame.new(0,30,0))
 							pcall(function()
 								Rigc.activeController:attack()
 							end)
@@ -4515,8 +4550,7 @@ spawn(function()
 							if sethiddenproperty then
 								sethiddenproperty(game.Players.LocalPlayer,"SimulationRadius",math.huge)
 							end
-						until 
-						not getgenv().Settings["Main"]["AutoFarm"] or v.Humanoid.Health <= 0 or not v.Parent
+						until not getgenv().Settings["Main"]["AutoFarm"] or v.Humanoid.Health <= 0 or not v.Parent
 					end
 				end
 			end
@@ -4525,4 +4559,4 @@ spawn(function()
 end)
 
 
--- loadstring(game:HttpGet("https://raw.githubusercontent.com/Lago602447/Club/main/script.lua"))()
+-- loadstring(game:HttpGet("https://raw.githubusercontent.com/Lago602447/Club/main/scripts.lua"))()
