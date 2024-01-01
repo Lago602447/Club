@@ -4391,7 +4391,7 @@ spawn(function()
 			if not IsQuest() then
 				repeat task.wait()
 					totarget(checkQuest("GetPosition"),checkQuest("Quest").Spawn)
-				until Distance(checkQuest("GetPosition").Position) <= 120\
+				until Distance(checkQuest("GetPosition").Position) <= 120
 				task.wait(0.68)
 				if Distance(checkQuest("GetPosition").Position) <= 50 then
 					AcceptQuest(checkQuest("Quest").NameQuest,checkQuest("Quest").LevelQuest)
