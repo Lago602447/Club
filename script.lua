@@ -4617,9 +4617,9 @@ spawn(function()
 	while task.wait() do
 		if getgenv().Settings["Main"]["AutoFarm"] then
 			pcall(function()
-				-- Rigc.activeController.timeToNextAttack = 0
-				-- Rigc.activeController.hitboxMagnitude = 50
-                -- Rigc.activeController.increment = #Rigc.activeController.anims.basic
+				Rigc.activeController.timeToNextAttack = 0
+				Rigc.activeController.hitboxMagnitude = 50
+                Rigc.activeController.increment = #Rigc.activeController.anims.basic
 				AttackNoCD() 
 			end)
 		end
