@@ -4522,16 +4522,14 @@ spawn(function()
 	while task.wait() do
 		if getgenv().Settings["Main"]["AutoFarm"] then
 			if not IsQuest() then
-				pcall(function()
-					repeat task.wait()
-						totarget(checkQuest("GetPosition"),checkQuest("Quest").Spawn)
-					until Distance(checkQuest("GetPosition").Position) <= 120
-					task.wait(0.68)
-					if Distance(checkQuest("GetPosition").Position) <= 50 then
-						AcceptQuest(checkQuest("Quest").NameQuest,checkQuest("Quest").LevelQuest)
-						repeat wait() until game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible
-					end
-				end)
+				repeat task.wait()
+					totarget(checkQuest("GetPosition"),checkQuest("Quest").Spawn)
+				until Distance(checkQuest("GetPosition").Position) <= 120
+				task.wait(0.68)
+				if Distance(checkQuest("GetPosition").Position) <= 50 then
+					AcceptQuest(checkQuest("Quest").NameQuest,checkQuest("Quest").LevelQuest)
+					repeat wait() until game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible
+				end
 			elseif IsQuest() then
 				local Mob = GetMobName()
 				for i,v in pairs(GetAllMob()) do
