@@ -3994,7 +3994,6 @@ function EquipWeapon(Tools)
     end
 end
 
-print(isnetworkowner(game.Players.LocalPlayer.Character.HumanoidRootPart))
 
 function BringMob(mob)
 	local Mob = workspace.Enemies:GetChildren()
