@@ -4020,9 +4020,7 @@ function totarget(CFgo,Name)
     getgenv().SpawnCheck = false
     local Level = game.Players.LocalPlayer.Data.Level.Value
     local Dis = Distance(CFgo.Position)
-	if Name ~= nil then
-    	local PlayerSpawns = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[Name].Part
-	end
+	local PlayerSpawns = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[Name].Part
     local Data = game:GetService("Players").LocalPlayer.Data
     local World = {
         Second = 4442272183,
@@ -4041,19 +4039,19 @@ function totarget(CFgo,Name)
     elseif Dis >= 1000 then
         Speed = 350
     end
-	if Name ~= nil then
-		if Data.SpawnPoint.Value == Name then
-			getgenv().SpawnCheck = true 
-		elseif Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-			getgenv().SpawnCheck = true
-		elseif game.placeId == World["Second"] and Distance(PlayerSpawns.Position) < Distank[1] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-			getgenv().SpawnCheck = true
-		elseif game.placeId == World["First"] and Distance(PlayerSpawns.Position) < Distank[2] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-			getgenv().SpawnCheck = true
-		elseif game.placeId == World["Third"] and Distance(PlayerSpawns.Position) < Distank[3] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-			getgenv().SpawnCheck = true
-		end
+	
+	if Data.SpawnPoint.Value == Name then
+		getgenv().SpawnCheck = true 
+	elseif Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+		getgenv().SpawnCheck = true
+	elseif game.placeId == World["Second"] and Distance(PlayerSpawns.Position) < Distank[1] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+		getgenv().SpawnCheck = true
+	elseif game.placeId == World["First"] and Distance(PlayerSpawns.Position) < Distank[2] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+		getgenv().SpawnCheck = true
+	elseif game.placeId == World["Third"] and Distance(PlayerSpawns.Position) < Distank[3] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+		getgenv().SpawnCheck = true
 	end
+	
 
     for i,v in pairs(game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates:GetChildren()) do
         if Data.SpawnPoint.Value == v.Name then
@@ -4073,7 +4071,7 @@ function totarget(CFgo,Name)
         end
     end
 
-    if getgenv().SpawnCheck == false and Name ~= nil then
+    if getgenv().SpawnCheck == false then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0,1000,0)
         task.wait(1)
         game.Players.LocalPlayer.Character.Humanoid.Health = 0
