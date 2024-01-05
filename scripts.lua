@@ -4230,7 +4230,7 @@ spawn(function()
 					until Distance(Q.PositionQuest) <= 120
 					wait(1)
 					print("F")
-					if Distance(Q.PositionQuest) <= 50 then
+					if Distance(Q.PositionQuest.Position) <= 50 then
 						AcceptQuest(Q.Value,Q.Index)
 						print("D")
 						repeat wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
