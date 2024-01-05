@@ -4390,7 +4390,7 @@ spawn(function()
 	while task.wait() do
 		if scripts["AutoFarmLevel"] then
 			--pcall(function()
-				local Q = CheckLevel()
+				local Q = Checklevel()
 				if not LocalPlayer.PlayerGui.Main.Quest.Visible then
 					for i,v in pairs(QuestNpc) do
 						if v.lowername == Q.Npc and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
