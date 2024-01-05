@@ -4169,10 +4169,6 @@ function GetMobName()
 	end
 end
 
-function IsQuest(BOOL)
-	return LocalPlayer.PlayerGui.Main.Quest.Visible or BOOL
-end
-
 local Close = Instance.new("ScreenGui")
 local TextButton = Instance.new("TextButton")
 
@@ -4269,16 +4265,16 @@ spawn(function()
 		if scripts["AutoFarmLevel"] then
 			--pcall(function()
 				local Q = CheckLevel()
-				if not IsQuest() then
+				if not LocalPlayer.PlayerGui.Main.Quest.Visible then
 					repeat task.wait()
 						totarget_spawn(Q.PositionQuest,Q.Spawn)
 					until Distance(Q.PositionQuest.Position) <= 120
 					task.wait(1)
 					if Distance(Q.PositionQuest.Position) <= 50 then
 						AcceptQuest(Q.Value,Q.Index)
-						repeat task.wait() until IsQuest()
+						repeat task.wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
 					end
-				elseif IsQuest() == true then
+				elseif LocalPlayer.PlayerGui.Main.Quest.Visible == true then
 					Q.Mob = GetMobName()
 					for i,v in pairs(GetAllMob()) do
 						if Q.Mob and v.Name:lower():sub(1,#Q.Mob) == Q.Mob:lower() and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
