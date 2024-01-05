@@ -4221,15 +4221,18 @@ end)
 spawn(function()
 	while wait() do
 		if scripts["AutoFarmLevel"] then
-			pcall(function()
+			--pcall(function()
 				local Q = CheckLevel()
 				if not LocalPlayer.PlayerGui.Main.Quest.Visible then
 					repeat task.wait()
+						print("F")
 						totarget_spawn(Q.PositionQuest)
 					until Distance(Q.PositionQuest) <= 120
 					wait(1)
+					print("F")
 					if Distance(Q.PositionQuest) <= 50 then
 						AcceptQuest(Q.Value,Q.Index)
+						print("D")
 						repeat wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
 					end
 				elseif LocalPlayer.PlayerGui.Main.Quest.Visible == true then
@@ -4254,7 +4257,7 @@ spawn(function()
 						end
 					end
 				end
-			end)
+			--end)
 		end
 	end
 end)
