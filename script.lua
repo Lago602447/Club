@@ -4248,21 +4248,21 @@ edit:Dropdown("Select Weapon",{"Melee","Sword"},function (v)
 	scripts["Weapons"] = v
 end)
 
-stats_edit:Toggle("Auto Stats",false,function(v)
-	scripts.Stats["Enabled"] = v
-end)
-stats_edit:Textbox("Melee","Please Enter",function(v)
-	scripts.Stats.Melee = v
-end)
-stats_edit:Textbox("Defense","Please Enter",function(v)
-	scripts.Stats.Defense = v
-end)
-stats_edit:Textbox("Sword","Please Enter",function(v)
-	scripts.Stats.Sword = v
-end)
-stats_edit:Textbox("Blox Fruit","Please Enter",function(v)
-	scripts.Stats["Blox Fruit"] = v
-end)
+-- stats_edit:Toggle("Auto Stats",false,function(v)
+-- 	scripts.Stats["Enabled"] = v
+-- end)
+-- stats_edit:Textbox("Melee","Please Enter",function(v)
+-- 	scripts.Stats.Melee = v
+-- end)
+-- stats_edit:Textbox("Defense","Please Enter",function(v)
+-- 	scripts.Stats.Defense = v
+-- end)
+-- stats_edit:Textbox("Sword","Please Enter",function(v)
+-- 	scripts.Stats.Sword = v
+-- end)
+-- stats_edit:Textbox("Blox Fruit","Please Enter",function(v)
+-- 	scripts.Stats["Blox Fruit"] = v
+-- end)
 
 spawn(function()
 	while task.wait() do
