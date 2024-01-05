@@ -3940,7 +3940,95 @@ end
 local LocalPlayer = game.Players.LocalPlayer
 local Rigc = getupvalue(require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework),2)
 local Collection = game:GetService("CollectionService")
+local Quest = require(game:GetService("ReplicatedStorage").Quests)
 local GuideModule = require(game:GetService("ReplicatedStorage").GuideModule)
+local Queue = require(game:GetService("ReplicatedStorage").Queue)
+local NPCList = getupvalues(Queue.new)[1][1].NPCDialogueEnabler.bin
+local QuestNpc = {}
+local PastQuest = 1
+local computed_quest = {}
+local quest_fordropdown = {}
+do -- Init
+	task = task or getrenv().task;
+	fastSpawn,fastWait,delay = task.spawn,task.wait,task.delay
+end
+local FirstSea
+local SecondSea
+local ThirdSea
+if game.PlaceId == 2753915549 then
+	FirstSea = true
+elseif game.PlaceId == 4442272183 then
+	SecondSea = true
+elseif game.PlaceId == 7449423635 then
+	ThirdSea = true
+end
+if not shared.orl then shared.orl = RL.wrapAttackAnimationAsync end
+if not shared.cpc then shared.cpc = PC.play end
+if not shared.dnew then shared.dnew = DMG.new end
+for i,v in pairs(NPCList) do
+	local Model = v.Model
+	if Model:FindFirstChild("QuestFloor",true) then
+		QuestNpc[Model.Name] = v
+		QuestNpc[Model.Name].lowername = Model.Name:lower()
+	end
+end
+for i,v in pairs(QuestNpc) do
+	computed_quest[v.Model.Name] = v.Model.Head.CFrame
+end
+for i,v in pairs(computed_quest) do
+	table.insert(quest_fordropdown,i)
+end
+
+local AllQuest = {
+    {1,"Bandit Quest Giver","Default"},
+    {10,"Adventurer","Jungle"},
+    {30,"Pirate Adventurer","Pirate"}, -- 3
+    {60,"Desert Adventurer","Desert"},
+    {90,"Villager","Snow"},
+    {120,"Marine","MarineBase"}, -- 6
+    {150,"Sky Adventurer","Sky"},
+	{190,"Jail Keeper","Prison"},
+    {250,"Colosseum Quest GIver","Colosseum"},
+    {300,"The Mayor","Magma"}, -- 9
+    {375,"King Neptune","Fishman"},
+    {450,"Mole","Sky"},
+    {525,"Gan Fall Adventurer","Sky2"}, -- 12
+    {625,"Freezeburg Quest Giver","Fountain"},
+    
+    -- V Second Sea V --
+    
+    {700,"Area 1 Quest Giver","Default"},
+    {775,"Area 2 Quest Giver",""}, -- 15
+    {875,"Marine Quest Giver",""},
+    {950,"Graveyard Quest Giver",""},
+    {1000,"Snow Quest Giver",""}, -- 18
+    {1100,"Ice Quest Giver",""},
+    {1175,"Fire Quest Giver",""},
+    {1250,"Rear Crew Quest Giver",""}, -- 21
+    {1300,"Front Crew Quest Giver",""},
+    {1350,"Frost Quest Giver",""},
+    {1425,"Forgotten Quest Giver"},"", -- 24
+    
+    -- V Third Sea V --
+
+    {1500,"Pirate Port Quest Giver","Default"},
+    {1575,"Amazon Quest Giver",""},
+    {1625,"Amazon Area 2 Quest Giver",""}, -- 27
+    {1700,"Marine Tree Quest Giver",""},
+    {1775,"Turtle Adventure Quest Giver",""},
+    {1825,"Deep Forest Quest Giver",""}, -- 30
+    {1900,"Deep Forest Area 2 Quest Giver",""},
+	{1975,"Haunted Castle Quest Giver 1",""},
+    {2025,"Haunted Castle Quest Giver 2",""},
+	{2075,"Peanut Quest Giver",""},
+	{2125,"Ice Cream Quest Giver",""},
+	{2200,"Cake Quest Giver 1",""},
+	{2250,"Cake Quest Giver 2",""},
+
+
+    -- V Fourth Sea V
+
+}
 
 function Attack()
 	spawn(function()
@@ -3957,6 +4045,7 @@ function Maxincrement()
 	return #Rigc.activeController.anims.basic
 end
 
+local LocalPlayer = game.Players.LocalPlayer
 function Distance(POS)
 	return LocalPlayer:DistanceFromCharacter(POS)
 end
@@ -4126,24 +4215,60 @@ function EquipWeapon(Tools)
 	end
 end
 
-function CheckLevel(LEVEL)
+function Checklevel(LEVEL)
 	local Level = LEVEL or LocalPlayer.Data.Level.Value
-	local CurrentQuest = {}
-	for i,v in pairs(GuideModule.Data.NPCList) do
-		if v.NPCName == GuideModule.Data.LastClosestNPC then
-			CurrentQuest.PositionQuest = CFrame.new(v.Position)
+	local CurrentPlaceId = tonumber(game.PlaceId)
+
+	if CurrentPlaceId == 4442272183 and Level >= 1500 then -- Sea 2
+		Level = 1499
+	elseif CurrentPlaceId == 7449423635 and Level >= 2550 then -- Sea 3
+		Level = 2549
+	elseif CurrentPlaceId == 2753915549 and Level >=  700 then
+		Level = 699 -- Sea 1
+	end
+
+	local FoundPassQuest = false
+	local less = math.huge
+	local less2 = math.huge
+	for i,value in pairs(Quest) do
+		for loop=1,#value do v = value[loop]
+			if Level >= v.LevelReq and not v.MeetsRequirements then
+				if v.Task[table.foreach(v.Task,tostring)] ~= 1 and Level - v.LevelReq < less then
+					less = Level - v.LevelReq
+					CurrentQuest = {
+						Name = tostring(i),
+						Value = tonumber(loop),
+						Mob = (table.foreach(v.Task,tostring)),
+					}
+					if #value > 1 and loop ~= 1 then
+						PastQuest = value[loop-1].LevelReq + 1
+						FoundPassQuest = true
+					end
+				end
+			end
 		end
 	end
 
-	if Level == 1 or Level <= 10 then
-		CurrentQuest.Value = "BanditQuest1"
-		CurrentQuest.Index = 1
-		CurrentQuest.Spawn = "Default"
-	elseif Level >= 10 and Level <= 15 then
-		CurrentQuest.Value = "JungleQuest"
-		CurrentQuest.Index = 1
-		CurrentQuest.Spawn = "Jungle"
+    for i=1,#AllQuest do v = AllQuest[i]
+        if Level >= v[1] and Level - v[1] < less2 then
+            less2 = Level - v[1]
+            CurrentQuest.Npc = v[2]:lower()
+            CurrentQuest.Index = i
+			CurrentQuest.Spawn = v[3]
+        end
+    end
+
+	if not LEVEL and not FoundPassQuest then
+		if CurrentQuest.Index > 1 then
+			local ID = tostring(game.PlaceId)
+			if (ID == "4442272183" and CurrentQuest.Index == 14) or (ID == "7449423635" and CurrentQuest.Index == 25) then
+				return CurrentQuest
+			end
+			PastQuest = AllQuest[CurrentQuest.Index][1]-1
+		end
 	end
+
+	RecentMob = ""
 
 	return CurrentQuest
 end
@@ -4270,13 +4395,17 @@ spawn(function()
 			--pcall(function()
 				local Q = CheckLevel()
 				if not LocalPlayer.PlayerGui.Main.Quest.Visible then
-					repeat task.wait()
-						totarget_spawn(Q.PositionQuest,Q.Spawn)
-					until Distance(Q.PositionQuest.Position) <= 120
-					task.wait(1)
-					if Distance(Q.PositionQuest.Position) <= 50 then
-						AcceptQuest(Q.Value,Q.Index)
-						repeat task.wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
+					for i,v in pairs(QuestNpc) do
+						if v.lowername == Q.Npc and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+							repeat task.wait()
+								totarget_spawn(v.Model:FindFirstChild("QuestFloor",true).CFrame,Q.Spawn)
+							until Distance(v.Model:FindFirstChild("QuestFloor",true).Position) <= 120
+                            wait(1)
+							if Distance(v.Model:FindFirstChild("QuestFloor",true).Position) <= 50 then
+								AcceptQuest(Q.Name,Q.Value)
+								repeat wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
+							end
+						end
 					end
 				elseif LocalPlayer.PlayerGui.Main.Quest.Visible == true then
 					Q.Mob = GetMobName()
@@ -4305,44 +4434,44 @@ spawn(function()
 	end
 end)
 
-spawn(function()
-	while task.wait() do
-		if scripts.Stats.Enabled then
-            if LocalPlayer.Data.Stats.Melee.Level.Value ~= scripts.Stats.Melee then
-                local args = {
-                    [1] = "AddPoint",
-                    [2] = "Melee",
-                    [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
-                }
-                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
-            end 
-            if LocalPlayer.Data.Stats.Defense.Level.Value ~= scripts.Stats.Defense then
-                local args = {
-                    [1] = "AddPoint",
-                    [2] = "Defense",
-                    [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
-                }
-                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
-            end 
-            if LocalPlayer.Data.Stats.Sword.Level.Value ~= scripts.Stats.Sword then
-                local args = {
-                    [1] = "AddPoint",
-                    [2] = "Sword",
-                    [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
-                }
-                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
-            end 
-            if game:GetService("Players").LocalPlayer.Data.Stats["Demon Fruit"].Level.Value ~= scripts.Stats["Blox Fruit"] then
-                local args = {
-                    [1] = "AddPoint",
-                    [2] = "Demon Fruit",
-                    [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
-                }
-                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
-            end
-		end
-	end
-end)
+-- spawn(function()
+-- 	while task.wait() do
+-- 		if scripts.Stats.Enabled then
+--             if LocalPlayer.Data.Stats.Melee.Level.Value ~= scripts.Stats.Melee then
+--                 local args = {
+--                     [1] = "AddPoint",
+--                     [2] = "Melee",
+--                     [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
+--                 }
+--                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+--             end 
+--             if LocalPlayer.Data.Stats.Defense.Level.Value ~= scripts.Stats.Defense then
+--                 local args = {
+--                     [1] = "AddPoint",
+--                     [2] = "Defense",
+--                     [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
+--                 }
+--                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+--             end 
+--             if LocalPlayer.Data.Stats.Sword.Level.Value ~= scripts.Stats.Sword then
+--                 local args = {
+--                     [1] = "AddPoint",
+--                     [2] = "Sword",
+--                     [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
+--                 }
+--                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+--             end 
+--             if game:GetService("Players").LocalPlayer.Data.Stats["Demon Fruit"].Level.Value ~= scripts.Stats["Blox Fruit"] then
+--                 local args = {
+--                     [1] = "AddPoint",
+--                     [2] = "Demon Fruit",
+--                     [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
+--                 }
+--                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+--             end
+-- 		end
+-- 	end
+-- end)
 
 
 spawn(function()
