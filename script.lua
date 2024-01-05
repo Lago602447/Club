@@ -3963,7 +3963,7 @@ end
 function totarget_spawn(CFgo,Name)
     local Dis = Distance(CFgo.Position)
 	local Level = LocalPlayer.Data.Level.Value
-	if not Name then return end
+	
     local PlayerSpawns = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[Name].Part
     local Data = game:GetService("Players").LocalPlayer.Data
     local World = {
@@ -3981,9 +3981,7 @@ function totarget_spawn(CFgo,Name)
     if Dis < 1000 then Speed = 400 elseif Dis >= 1000 then Speed = 350 end
 
     getgenv().ret = false
-    if Data.SpawnPoint.Value == Name then
-        getgenv().ret = true 
-    elseif Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+    if Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
         getgenv().ret = true
     elseif game.placeId == World["Second"] and Distance(PlayerSpawns.Position) < Distank[1] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
         getgenv().ret = true
@@ -4010,12 +4008,9 @@ function totarget_spawn(CFgo,Name)
             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetLastSpawnPoint",Name)
             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
         until (Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name)
+		getgenv().ret = true
     end
     
-	if Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-		getgenv().ret = true
-	end
- 
 	if getgenv().ret then
 		if Dis > 430 then
 			local tween_s = game:service"TweenService"
@@ -4337,7 +4332,7 @@ spawn(function()
                 }
                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
             end 
-            if LocalPlayer.Data.Stats.DevilFruit.Level.Value ~= scripts.Stats["Blox Fruit"] then
+            if game:GetService("Players").LocalPlayer.Data.Stats["Demon Fruit"].Level.Value ~= scripts.Stats["Blox Fruit"] then
                 local args = {
                     [1] = "AddPoint",
                     [2] = "Demon Fruit",
