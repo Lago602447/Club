@@ -4146,7 +4146,7 @@ function CheckLevel(LEVEL)
 
 	if Level == 1 or Level <= 10 then
 		CurrentQuest.Value = "BanditQuest1"
-		CurrentQuest.Index = "1"
+		CurrentQuest.Index = 1
 		CurrentQuest.Spawn = "Default"
 	end
 
