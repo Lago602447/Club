@@ -4174,6 +4174,10 @@ function GetMobName()
 	end
 end
 
+function IsQuest(BOOL)
+	return LocalPlayer.PlayerGui.Main.Quest.Visible or BOOL
+end
+
 local Close = Instance.new("ScreenGui")
 local TextButton = Instance.new("TextButton")
 
@@ -4233,12 +4237,12 @@ local Tap = Window:Tap("Edition")
 local edit = Tap:newpage()
 local set_edit = Tap:newpage()
 -- tab 2 --
-local Combats = Window:Tap("Combats")
+local Stats = Window:Tap("Stats")
+local stats_edit = Stats:newpage()
 -- tab 3 --
 local TelePort = Window:Tap("TelePort")
 -- tab 4 --
-local Stats = Window:Tap("Stats")
-local stats_edit = Stats:newpage()
+local Combats = Window:Tap("Combats")
 -- tab 5 --
 local Settings = Window:Tap("Configuration")
 
@@ -4252,60 +4256,34 @@ end)
 stats_edit:Toggle("Auto Stats",false,function(v)
 	scripts.Stats["Enabled"] = v
 end)
-stats_edit:Textbox("Melee"," ",function(v)
+stats_edit:Textbox("Melee","Please Enter",function(v)
 	scripts.Stats.Melee = v
 end)
-stats_edit:Textbox("Defense"," ",function(v)
+stats_edit:Textbox("Defense","Please Enter",function(v)
 	scripts.Stats.Defense = v
 end)
-stats_edit:Textbox("Sword"," ",function(v)
+stats_edit:Textbox("Sword","Please Enter",function(v)
 	scripts.Stats.Sword = v
 end)
-stats_edit:Textbox("Blox Fruit","",function(v)
+stats_edit:Textbox("Blox Fruit","Please Enter",function(v)
 	scripts.Stats["Blox Fruit"] = v
 end)
 
 spawn(function()
 	while task.wait() do
 		if scripts["AutoFarmLevel"] then
-			if LocalPlayer.Data.Level.Value >= 10 and LocalPlayer.Data.Level.Value <= 300 then
-				for i,v in pairs(workspace.Enemies:GetChildren()) do
-					if v.Name == "Shanda [Lv. 475]" and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
-						repeat wait()
-							BringMob(v)
-							if scripts["Weapons"] ~= nil or scripts["Weapons"] ~= "" then
-								EquipWeapon(scripts["Weapons"])
-							end
-							totarget(v.HumanoidRootPart.CFrame * CFrame.new(0,50,0))
-							pcall(function()
-								Rigc.activeController:attack()
-							end)
-							v.HumanoidRootPart.CanCollide = false
-							v.HumanoidRootPart.Size = Vector3.new(70, 70, 70)
-							delay(10,function()
-								v.Humanoid.Health = 0
-							end)
-						until not scripts["AutoFarmLevel"] or v.Humanoid.Health <= 0 or not v.Parent or not LocalPlayer.Data.Level.Value >= 300
-					else
-						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(-7862, 5545, -381))
-					end
-				end
-				repeat task.wait() until LocalPlayer.Data.Level.Value >= 300
-			end
-		end
-		if scripts["AutoFarmLevel"] then
 			--pcall(function()
 				local Q = CheckLevel()
-				if not LocalPlayer.PlayerGui.Main.Quest.Visible then
+				if not IsQuest() then
 					repeat task.wait()
 						totarget_spawn(Q.PositionQuest,Q.Spawn)
 					until Distance(Q.PositionQuest.Position) <= 120
 					task.wait(1)
 					if Distance(Q.PositionQuest.Position) <= 50 then
 						AcceptQuest(Q.Value,Q.Index)
-						repeat task.wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
+						repeat task.wait() until IsQuest()
 					end
-				elseif LocalPlayer.PlayerGui.Main.Quest.Visible == true then
+				elseif IsQuest() == true then
 					Q.Mob = GetMobName()
 					for i,v in pairs(GetAllMob()) do
 						if Q.Mob and v.Name:lower():sub(1,#Q.Mob) == Q.Mob:lower() and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
