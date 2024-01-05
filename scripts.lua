@@ -4227,7 +4227,7 @@ spawn(function()
 					repeat task.wait()
 						print("F")
 						totarget_spawn(Q.PositionQuest)
-					until Distance(Q.PositionQuest) <= 120
+					until Distance(Q.PositionQuest.Position) <= 120
 					wait(1)
 					print("F")
 					if Distance(Q.PositionQuest.Position) <= 50 then
