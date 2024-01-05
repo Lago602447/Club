@@ -4229,7 +4229,7 @@ spawn(function()
 						totarget_spawn(Q.PositionQuest)
 					until Distance(Q.PositionQuest.Position) <= 120
 					wait(1)
-					print("F")
+					print("G")
 					if Distance(Q.PositionQuest.Position) <= 50 then
 						AcceptQuest(Q.Value,Q.Index)
 						print("D")
