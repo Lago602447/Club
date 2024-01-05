@@ -4220,6 +4220,13 @@ getgenv().scripts = {
             ["Midnight Blade"] = false,
         },
     },
+	Stats = {
+        ["Enabled"] = false,
+        ["Melee"] = 2550,
+        ["Defense"] = 2550,
+        ["Sword"] = 1275,
+        ["Blox Fruit"] = 1275,
+    },
 }
 
 
@@ -4234,6 +4241,8 @@ local Combats = Window:Tap("Combats")
 -- tab 3 --
 local TelePort = Window:Tap("TelePort")
 -- tab 4 --
+local Stats = Window:Tap("Stats")
+-- tab 5 --
 local Settings = Window:Tap("Configuration")
 
 edit:Toggle("Auto Farm Level",false,function(v)
@@ -4243,22 +4252,61 @@ edit:Dropdown("Select Weapon",{"Melee","Sword"},function (v)
 	scripts["Weapons"] = v
 end)
 
+Stats:Toggle("Auto Stats",false,function(v)
+	scripts.Stats.Enabled = v
+end)
+tab:Textbox("Melee"," ",function(v)
+	scripts.Stats.Melee = v
+end)
+tab:Textbox("Defense"," ",function(v)
+	scripts.Stats.Defense = v
+end)
+tab:Textbox("Sword"," ",function(v)
+	scripts.Stats.Sword = v
+end)
+tab:Textbox("Blox Fruit","",function(v)
+	scripts.Stats["Blox Fruit"] = v
+end)
+
 spawn(function()
-	while wait() do
+	while task.wait() do
+		if scripts["AutoFarmLevel"] then
+			if LocalPlayer.Data.Level.Value >= 10 and LocalPlayer.Data.Level.Value <= 300 then
+				for i,v in pairs(workspace.Enemies:GetChildren()) do
+					if v.Name == "Shanda [Lv. 475]" and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+						repeat wait()
+							BringMob(v)
+							if scripts["Weapons"] ~= nil or scripts["Weapons"] ~= "" then
+								EquipWeapon(scripts["Weapons"])
+							end
+							totarget(v.HumanoidRootPart.CFrame * CFrame.new(0,50,0))
+							pcall(function()
+								Rigc.activeController:attack()
+							end)
+							v.HumanoidRootPart.CanCollide = false
+							v.HumanoidRootPart.Size = Vector3.new(70, 70, 70)
+							delay(10,function()
+								v.Humanoid.Health = 0
+							end)
+						until not scripts["AutoFarmLevel"] or v.Humanoid.Health <= 0 or not v.Parent or not LocalPlayer.Data.Level.Value >= 300
+					else
+						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(-7862, 5545, -381))
+					end
+				end
+				repeat task.wait() until LocalPlayer.Data.Level.Value >= 300
+			end
+		end
 		if scripts["AutoFarmLevel"] then
 			--pcall(function()
 				local Q = CheckLevel()
 				if not LocalPlayer.PlayerGui.Main.Quest.Visible then
 					repeat task.wait()
-						print("F")
 						totarget_spawn(Q.PositionQuest,Q.Spawn)
 					until Distance(Q.PositionQuest.Position) <= 120
-					wait(1)
-					print("G")
+					task.wait(1)
 					if Distance(Q.PositionQuest.Position) <= 50 then
 						AcceptQuest(Q.Value,Q.Index)
-						print("D")
-						repeat wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
+						repeat task.wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
 					end
 				elseif LocalPlayer.PlayerGui.Main.Quest.Visible == true then
 					Q.Mob = GetMobName()
@@ -4285,4 +4333,102 @@ spawn(function()
 			--end)
 		end
 	end
+end)
+
+spawn(function()
+	while task.wait() do
+		if scripts.Stats.Enabled then
+            if LocalPlayer.Data.Stats.Melee.Level.Value ~= scripts.Stats.Melee then
+                local args = {
+                    [1] = "AddPoint",
+                    [2] = "Melee",
+                    [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
+                }
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+            end 
+            if LocalPlayer.Data.Stats.Defense.Level.Value ~= scripts.Stats.Defense then
+                local args = {
+                    [1] = "AddPoint",
+                    [2] = "Defense",
+                    [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
+                }
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+            end 
+            if LocalPlayer.Data.Stats.Sword.Level.Value ~= scripts.Stats.Sword then
+                local args = {
+                    [1] = "AddPoint",
+                    [2] = "Sword",
+                    [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
+                }
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+            end 
+            if LocalPlayer.Data.Stats.DevilFruit.Level.Value ~= scripts.Stats["Blox Fruit"] then
+                local args = {
+                    [1] = "AddPoint",
+                    [2] = "Demon Fruit",
+                    [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
+                }
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+            end
+		end
+	end
+end)
+
+
+spawn(function()
+	while task.wait() do
+		if scripts["AutoFarmLevel"] then
+			pcall(function()
+				Rigc.activeController.timeToNextAttack = 0
+				Rigc.activeController.hitboxMagnitude = 100
+				Rigc.activeController.focusStart = 0
+				Rigc.activeController.blocking = false
+				Rigc.activeController.attacking = false
+				Rigc.activeController.humanoid.AutoRotate = true
+				Rigc.activeController.increment = Maxincrement()
+				if Rigc.activeController.data then
+					Rigc.activeController.data.attackStartCallback = function()end
+				end
+				Attack()
+			end)
+		end
+	end
+end)
+spawn(function()
+	while task.wait() do
+		if scripts["AutoFarmLevel"] then
+			pcall(function()
+				Attack()
+			end)
+		end
+	end
+end)
+task.spawn(function()
+	game:GetService("RunService").Stepped:Connect(function()
+		pcall(function()
+			if scripts["AutoFarmLevel"] then
+				if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+					if not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyVelocity1") then
+						if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
+							game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit = false
+						end
+						local BodyVelocity = Instance.new("BodyVelocity")
+						BodyVelocity.Name = "BodyVelocity1"
+						BodyVelocity.Parent =  game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+						BodyVelocity.MaxForce = Vector3.new(10000, 10000, 10000)
+						BodyVelocity.Velocity = Vector3.new(0, 0, 0)
+					end
+				end
+				for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+					if v:IsA("BasePart") then
+						v.CanCollide = false    
+					end
+				end
+			else
+				if game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyVelocity1") then
+					game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyVelocity1"):Destroy();
+				end
+			end
+		end)
+	end)
 end)
