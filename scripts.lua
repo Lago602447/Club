@@ -4153,6 +4153,31 @@ function CheckLevel(LEVEL)
 	return CurrentQuest
 end
 
+function GetMobName()
+	if LocalPlayer.PlayerGui.Main.Quest.Visible then
+		local Text = LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text:split(" ")
+		local RealText = ""
+		local List = #Text
+		local Is = true
+		if Text[List]:find("/1)") then
+			Is = false
+		end
+		table.remove(Text,1)
+		table.remove(Text,1)
+		table.remove(Text,#Text)
+		for i=1,#Text do local v = Text[i]
+			RealText = RealText..v
+			if #Text ~= i then
+				RealText = RealText.." "
+			end
+		end
+		if Is then
+			RealText = RealText:sub(1,#RealText-1)
+		end
+		return RealText
+	end
+end
+
 local Close = Instance.new("ScreenGui")
 local TextButton = Instance.new("TextButton")
 
