@@ -1,10 +1,3 @@
-getgenv().Settings = {
-    ["Main"] = {
-        ["AutoFarm"] = false,
-		["SelectWeapon"] = "Melee",
-    },
-}
-
 do  local ui =  game:GetService("CoreGui"):FindFirstChild("Testui")  if ui then ui:Destroy() end end
 
 local UserInputService = game:GetService("UserInputService")
@@ -413,14 +406,10 @@ function ui:W1n(text,text2,text2Pos,toclose)
 				tween:Create(MainSceen,TweenInfo.new(0.4,Enum.EasingStyle.Back,Enum.EasingDirection.In),{Size = UDim2.new(0, 0, 0, 0)}):Play()
 				tween:Create(Main_UiStroke,TweenInfo.new(0.4,Enum.EasingStyle.Back,Enum.EasingDirection.In),{Thickness = 0}):Play()
 				uitoggled = true
-				wait(.5)
-				ui:Notification("UI Toggle","Has Been Close",2.5)
 			else
 				MainSceen:TweenSize(UDim2.new(0, 550, 0, 300), Enum.EasingDirection.Out, Enum.EasingStyle.Back, .4, true)
 				tween:Create(Main_UiStroke,TweenInfo.new(0.4,Enum.EasingStyle.Back,Enum.EasingDirection.In),{Thickness = 2}):Play()
 				uitoggled = false
-				wait(.5)
-				ui:Notification("UI Toggle","Has Been Open",2.5)
 			end
 		end
 	end)
@@ -3949,80 +3938,33 @@ function ui:W1n(text,text2,text2Pos,toclose)
 end
 
 local LocalPlayer = game.Players.LocalPlayer
-local Collection = game:GetService("CollectionService")
 local Rigc = getupvalue(require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework),2)
+local Collection = game:GetService("CollectionService")
+local GuideModule = require(game:GetService("ReplicatedStorage").GuideModule)
 
-function AddTag(Obj,Tag)
-    if not Collection:HasTag(Obj,Tag) then
-        Collection:AddTag(Obj,Tag)
-    end
-end
-function GetAllMob()
-	return Collection:GetTagged("ActiveRig")
-end
-function GetToolFromTip(Tip,GetName)
-    for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-        if v.ClassName == "Tool" and v.ToolTip == Tip then
-            if GetName then
-                return v.Name
-            else
-                return v
-            end
-        end
-    end
-    if LocalPlayer.Character then
-        local v = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool") do
-            if v.ClassName == "Tool" and v.ToolTip == Tip then
-                if GetName then
-                    return v.Name
-                else
-                    return v
-                end
-            end
-        end
-    end
-end
-function EquipWeapon(Tools)
-    if LocalPlayer.Character then
-        if game.Players.LocalPlayer.Backpack:FindFirstChild(Tools) then
-            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild(Tools)
-            wait()
-            game.Players.LocalPlayer.Character.Humanoid:EquipTool(tool)
-        elseif GetToolFromTip(Tools) then
-            game.Players.LocalPlayer.Character.Humanoid:EquipTool(GetToolFromTip(Tools))
-        end
-    end
-end
-
-
-function BringMob(mob)
-	local Mob = workspace.Enemies:GetChildren()
-	for i,v in pairs(Mob) do
-		if v.Name == mob.Name and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
-			local CFrameTo = mob.HumanoidRootPart.CFrame
-            v.HumanoidRootPart.CFrame = CFrameTo
-            v.HumanoidRootPart.Size = Vector3.new(70,70,70)
-            v.Humanoid.PlatformStand = true
-            v.Humanoid.Sit = true					
-            v.HumanoidRootPart.CanCollide = false
-            v.Humanoid.JumpPower = 0
-            v.Humanoid.WalkSpeed = 0
-            v.Humanoid:ChangeState(11)
-            v.Humanoid:ChangeState(14)
-            if sethiddenproperty then
-				sethiddenproperty(game.Players.LocalPlayer,"SimulationRadius",math.huge)
+function Attack()
+	spawn(function()
+		pcall(function()
+			local Controller = Rigc.activeController
+			if Controller and tick() >= cd then
+				cd = tick() + 0.1
+				Controller:attack()
 			end
-		end
-	end
+		end)
+	end)
 end
+function Maxincrement()
+	return #Rigc.activeController.anims.basic
+end
+
 function Distance(POS)
-	return game.Players.LocalPlayer:DistanceFromCharacter(POS)
+	return LocalPlayer:DistanceFromCharacter(POS)
 end
-function totarget(CFgo,Name)
-    getgenv().SpawnCheck = false
-    local Level = game.Players.LocalPlayer.Data.Level.Value
+function totarget_spawn(CFgo,Name)
     local Dis = Distance(CFgo.Position)
-	local PlayerSpawns = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[Name].Part
+	local Level = LocalPlayer.Data.Level.Value
+	if not Name then return end
+    local PlayerSpawns = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[Name].Part
     local Data = game:GetService("Players").LocalPlayer.Data
     local World = {
         Second = 4442272183,
@@ -4035,409 +3977,101 @@ function totarget(CFgo,Name)
         [3] = 4500,
     }
 
-    if not game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
-    if Dis < 1000 then
-        Speed = 400
-    elseif Dis >= 1000 then
-        Speed = 350
+    if not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
+    if Dis < 1000 then Speed = 400 elseif Dis >= 1000 then Speed = 350 end
+
+    getgenv().ret = false
+    if Data.SpawnPoint.Value == Name then
+        getgenv().ret = true 
+    elseif Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+        getgenv().ret = true
+    elseif game.placeId == World["Second"] and Distance(PlayerSpawns.Position) < Distank[1] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+        getgenv().ret = true
+    elseif game.placeId == World["First"] and Distance(PlayerSpawns.Position) < Distank[2] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+        getgenv().ret = true
+    elseif game.placeId == World["Third"] and Distance(PlayerSpawns.Position) < Distank[3] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+        getgenv().ret = true
     end
-	
-	if Data.SpawnPoint.Value == Name then
-		getgenv().SpawnCheck = true 
-	elseif Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-		getgenv().SpawnCheck = true
-	elseif game.placeId == World["Second"] and Distance(PlayerSpawns.Position) < Distank[1] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-		getgenv().SpawnCheck = true
-	elseif game.placeId == World["First"] and Distance(PlayerSpawns.Position) < Distank[2] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-		getgenv().SpawnCheck = true
-	elseif game.placeId == World["Third"] and Distance(PlayerSpawns.Position) < Distank[3] and Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
-		getgenv().SpawnCheck = true
-	end
-	
+
 
     for i,v in pairs(game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates:GetChildren()) do
         if Data.SpawnPoint.Value == v.Name then
             if Distance(v:GetModelCFrame().Position) > Distank[2] and game.PlaceId == World.First then
-                getgenv().SpawnCheck = false
+                getgenv().ret = false
             end
         end
     end
 
-    if Level >= 375 and Level <= 450 then
-        getgenv().SpawnCheck = true
-    elseif Level >= 475 and Level < 525 then
-        getgenv().SpawnCheck = true
-    elseif Level >= 525 and Level < 625 then
-        if Data.SpawnPoint.Value == "Sky2" then
-            getgenv().SpawnCheck = true
-        end
-    end
-
-    if getgenv().SpawnCheck == false then
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0,1000,0)
-        task.wait(1)
+    if getgenv().ret == false and Data.SpawnPoint.Value ~= Name and Data.LastSpawnPoint.Value ~= Name then
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0,10000,0)
         game.Players.LocalPlayer.Character.Humanoid.Health = 0
         repeat task.wait()
             game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PlayerSpawns.CFrame
             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetLastSpawnPoint",Name)
             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
         until (Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name)
-        getgenv().SpawnCheck = true
-    end
-
-    if getgenv().SpawnCheck then
-        if Dis > 430 then
-            local tween_s = game:service"TweenService"
-            local info = TweenInfo.new(Dis/Speed, Enum.EasingStyle.Linear)
-            local tween, err = pcall(function()
-                _G.Teleporting = true
-                tween = tween_s:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, info, {CFrame = CFgo})
-                tween:Play()
-                repeat
-                    task.wait() 
-                until Distance(CFgo.Position) <= 430 or not _G.Teleporting
-                tween:Cancel()
-                _G.Teleporting = false
-                task.wait(0.8)
-                if Distance(CFgo.Position) <= 430 then
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
-                end
-            end)
-            if not tween then return err end
-        else
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
-        end
-    end
-end
-
-function tweento(CFgo)
-
-    local Dis = Distance(CFgo.Position)
-    if not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
-
-    if Dis < 1000 then
-        Speed = 400
-    elseif Dis >= 1000 then
-        Speed = 350
-    end
-
-    if Dis > 430 then
-        local tween_s = game:service"TweenService"
-        local info = TweenInfo.new(Dis/Speed, Enum.EasingStyle.Linear)
-        local tween, err = pcall(function()
-            _G.Teleporting = true
-            tween = tween_s:Create(LocalPlayer.Character.HumanoidRootPart, info, {CFrame = CFgo})
-            tween:Play()
-            repeat
-                task.wait() 
-            until Distance(CFgo.Position) <= 430 or not _G.Teleporting
-            tween:Cancel()
-            _G.Teleporting = false
-            task.wait(0.8)
-            if Distance(CFgo.Position) <= 430 then
-                LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
-            end
-        end)
-        if not tween then return err end
-    else
-        LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
     end
     
-end
-
-function checkQuest(method)
-	local Npc = require(game:GetService("ReplicatedStorage").GuideModule)
-	local Level = game.Players.LocalPlayer.Data.Level.Value
-	local CFrameQuest,ValueQuest,IndexQuest
-	if method == "GetPosition" then
-		for i,v in pairs(Npc.Data.NPCList) do
-			if v.NPCName == Npc.Data.LastClosestNPC then
-				CFrameQuest = CFrame.new(v.Position)
-			end
-		end
-		return CFrameQuest
+	if Data.SpawnPoint.Value == Name and Data.LastSpawnPoint.Value == Name then
+		getgenv().ret = true
 	end
-	if method == "Quest" then
-        -- First Sea
-        if game.PlaceId == 2753915549 then
-            if Level == 1 or Level <= 9 then
-                 ValueQuest = "BanditQuest1"
-                 IndexQuest = 1
-				 SpawnPoint = "Default"
-            elseif Level == 10 or Level <= 14 then
-                 ValueQuest = "JungleQuest"
-                 IndexQuest = 1
-				 SpawnPoint = "Jungle"
-            elseif Level == 15 or Level <= 29 then
-                 ValueQuest = "JungleQuest"
-                 IndexQuest = 2
-				 SpawnPoint = "Jungle"
-            elseif Level == 30 or Level <= 39 then
-                 ValueQuest = "BuggyQuest1"
-                 IndexQuest = 1
-				 SpawnPoint = "Pirate"
-            elseif Level == 40 or Level <= 59 then
-                 ValueQuest = "BuggyQuest1"
-                 IndexQuest = 2
-				 SpawnPoint = "Pirate"
-            elseif Level == 60 or Level <= 74 then
-                 ValueQuest = "DesertQuest"
-                 IndexQuest = 1
-				 SpawnPoint = "Desert"
-            elseif Level == 75 or Level <= 89 then
-                 ValueQuest = "DesertQuest"
-                 IndexQuest = 2
-				 SpawnPoint = "Desert"
-            elseif Level == 90 or Level <= 99 then
-                 ValueQuest = "SnowQuest"
-                 IndexQuest = 1
-				 SpawnPoint = "Ice"
-            elseif Level == 100 or Level <= 119 then
-                 ValueQuest = "SnowQuest"
-                 IndexQuest = 2
-				 SpawnPoint = "Ice"
-            elseif Level == 120 or Level <= 149 then 
-                 ValueQuest = "MarineQuest2"
-                 IndexQuest = 1
-				 SpawnPoint = "MarineBase"
-            elseif Level == 150 or Level <= 174 then
-                 ValueQuest = "SkyQuest"
-                 IndexQuest = 1
-				 SpawnPoint = "Sky"
-            elseif Level == 174 or Level <= 189 then
-                 ValueQuest = "SkyQuest"
-                 IndexQuest = 2
-				 SpawnPoint = "Sky"
-            elseif Level == 190 or Level <= 249 then
-                 ValueQuest = "PrisonerQuest"
-                 IndexQuest = 1
-				 SpawnPoint = "Prison"
-            elseif Level == 220 or Level <= 224 then
-                 ValueQuest = "PrisonerQuest"
-                 IndexQuest = 2
-				 SpawnPoint = "Prison"
-            elseif Level == 250  or Level <= 274 then
-                 ValueQuest = "ColosseumQuest"
-                 IndexQuest = 1
-				 SpawnPoint = "Colosseum"
-            elseif Level == 275  or Level <= 299 then
-                 ValueQuest = "ColosseumQuest"
-                 IndexQuest = 2
-				 SpawnPoint = "Colosseum"
-            elseif Level == 300  or Level <= 329 then
-                 ValueQuest = "MagmaQuest"
-                 IndexQuest = 1
-				 SpawnPoint = "Magma"
-            elseif Level == 330  or Level <= 374 then
-                 ValueQuest = "MagmaQuest"
-                 IndexQuest = 2
-				 SpawnPoint = "Magma"
-            elseif Level == 375  or Level <= 399 then
-                 ValueQuest = "FishmanQuest"
-                 IndexQuest = 1
-				 SpawnPoint = "Fishman"
-            elseif Level == 400  or Level <= 449 then
-                 ValueQuest = "FishmanQuest"
-                 IndexQuest = 2
-				 SpawnPoint = "Fishman"
-            elseif Level == 450  or Level <= 474 then
-                 ValueQuest = "SkyExp1Quest"
-                 IndexQuest = 1
-				 SpawnPoint = "Sky"
-            elseif Level == 475  or Level <= 524 then
-                 ValueQuest = "SkyExp1Quest"
-                 IndexQuest = 2
-				 SpawnPoint = "Jungle"
-            elseif Level == 525  or Level <= 549 then
-                 ValueQuest = "SkyExp2Quest"
-                 IndexQuest = 1
-				 SpawnPoint = "Sky2"
-            elseif Level == 550  or Level <= 624 then
-                 ValueQuest = "SkyExp2Quest"
-                 IndexQuest = 2
-				 SpawnPoint = "Sky2"
-            elseif Level == 625  or Level <= 649 then
-                 ValueQuest = "FountainQuest"
-                 IndexQuest = 1
-				 SpawnPoint = "Fountain"
-            elseif Level >= 650  then
-                 ValueQuest = "FountainQuest"
-                 IndexQuest = 2
-				 SpawnPoint = "Fountain"
-            end
-        -- Second Sea
-        elseif game.PlaceId == 4442272183 then
-            if Level == 700  or Level <= 724 then
-                 ValueQuest = "Area1Quest"
-                 IndexQuest = 1
-            elseif Level == 725  or Level <= 774 then
-                 ValueQuest = "Area1Quest"
-                 IndexQuest = 2
-            elseif Level == 775  or Level <= 799 then  
-                 ValueQuest = "Area2Quest"
-                 IndexQuest = 1
-            elseif Level == 800  or Level <= 874 then
-                 ValueQuest = "Area2Quest"
-                 IndexQuest = 2
-            elseif Level == 875  or Level <= 899 then
-                 ValueQuest = "MarineQuest3"
-                 IndexQuest = 1
-            elseif Level == 900  or Level <= 949 then
-                 ValueQuest = "MarineQuest3"
-                 IndexQuest = 2
-            elseif Level == 950  or Level <= 974 then
-                 ValueQuest = "ZombieQuest"
-                 IndexQuest = 1
-            elseif Level == 975 or Level <= 999 then
-                 ValueQuest = "ZombieQuest"
-                 IndexQuest = 2
-            elseif Level == 1000 or Level <= 1049 then
-                 ValueQuest = "SnowMountainQuest"
-                 IndexQuest = 1
-            elseif Level == 1050 or Level <= 1099 then
-                 ValueQuest = "SnowMountainQuest"
-                 IndexQuest = 2
-            elseif Level == 1100 or Level <= 1124 then
-                 ValueQuest = "IceSideQuest"
-                 IndexQuest = 1
-            elseif Level == 1125 or Level <= 1174 then
-                 ValueQuest = "IceSideQuest"
-                 IndexQuest = 2
-            elseif Level == 1175 or Level <= 1199 then
-                 ValueQuest = "FireSideQuest"
-                 IndexQuest = 1
-            elseif Level == 1200 or Level <= 1249 then
-                 ValueQuest = "FireSideQuest"
-                 IndexQuest = 2
-            elseif Level == 1250 or Level <= 1274 then
-                 ValueQuest = "ShipQuest1"
-                 IndexQuest = 1
-            elseif Level == 1275 or Level <= 1299 then 
-                 ValueQuest = "ShipQuest1"
-                 IndexQuest = 2
-            elseif Level == 1300 or Level <= 1324 then
-                 ValueQuest = "ShipQuest2"
-                 IndexQuest = 1
-            elseif Level == 1325 or Level <= 1349 then
-                 ValueQuest = "ShipQuest2"
-                 IndexQuest = 2
-            elseif Level == 1350 or Level <= 1374 then
-                 ValueQuest = "FrostQuest"
-                 IndexQuest = 1
-            elseif Level == 1375 or Level <= 1424 then 
-                 ValueQuest = "FrostQuest"
-                 IndexQuest = 2
-            elseif Level == 1425 or Level <= 1449 then
-                 ValueQuest = "ForgottenQuest"
-                 IndexQuest = 1
-            elseif Level >= 1450 then
-                 ValueQuest = "ForgottenQuest"
-                 IndexQuest = 2
-            end
-        -- Third Sea
-        else
-            if Level == 1450 or Level <= 1524 then
-                 ValueQuest = "PiratePortQuest"
-                 IndexQuest = 1
-            elseif Level == 1525 or Level <= 1574 then
-                 ValueQuest = "PiratePortQuest"
-                 IndexQuest = 2
-            elseif Level == 1575 or Level <= 1599 then
-                 ValueQuest = "AmazonQuest"
-                 IndexQuest = 1
-            elseif Level == 1600 or Level <= 1624 then
-                 ValueQuest = "AmazonQuest"
-                 IndexQuest = 2
-            elseif Level == 1624 or Level <= 1649 then
-                 ValueQuest = "AmazonQuest2"
-                 IndexQuest = 1
-            elseif Level == 1650 or Level <= 1699 then
-                 ValueQuest = "AmazonQuest2"
-                 IndexQuest = 2
-            elseif Level == 1700 or Level <= 1724 then
-                 ValueQuest = "MarineTreeIsland"
-                 IndexQuest = 1
-            elseif Level == 1725 or Level <= 1774 then
-                 ValueQuest = "MarineTreeIsland"
-                 IndexQuest = 2
-            elseif Level == 1775 or Level <= 1799 then
-                 ValueQuest = "DeepForestIsland3"
-                 IndexQuest = 1
-            elseif Level == 1800 or Level <= 1824 then
-                 ValueQuest = "DeepForestIsland3"
-                 IndexQuest = 2
-            elseif Level == 1825 or Level <= 1849 then
-                 ValueQuest = "DeepForestIsland"
-                 IndexQuest = 1
-            elseif Level == 1850 or Level <= 1899 then
-                 ValueQuest = "DeepForestIsland"
-                 IndexQuest = 2
-            elseif Level == 1900 or Level <= 1924 then
-                 ValueQuest = "DeepForestIsland2"
-                 IndexQuest = 1
-            elseif Level  ==  1925 or Level <= 1974 then
-                 ValueQuest = "DeepForestIsland2"
-                 IndexQuest = 2
-            elseif Level  ==  1975 or Level <= 1999 then
-                 ValueQuest = "HauntedQuest1"
-                 IndexQuest = 1
-            elseif Level  ==  2000 or Level <= 2024 then
-                 ValueQuest = "HauntedQuest1"
-                 IndexQuest = 2
-            elseif Level  ==  2025 or Level <= 2049 then
-                 ValueQuest = "HauntedQuest2"
-                 IndexQuest = 1
-            elseif Level  ==  2050 or Level <= 2074 then
-                 ValueQuest = "HauntedQuest2"
-                 IndexQuest = 2
-            elseif Level  ==  2075 or Level <= 2099 then
-                 ValueQuest = "NutsIslandQuest"
-                 IndexQuest = 1
-            elseif Level  ==  2100 or Level <= 2124 then
-                 ValueQuest = "NutsIslandQuest"
-                 IndexQuest = 2
-            elseif Level  ==  2125 or Level <= 2149 then
-                 ValueQuest = "IceCreamIslandQuest"
-                 IndexQuest = 1
-            elseif Level  ==  2150 or Level <= 2199 then
-                 ValueQuest = "IceCreamIslandQuest"
-                 IndexQuest = 2
-            elseif Level  ==  2200 or Level <= 2224 then
-                 ValueQuest = "CakeQuest1"
-                 IndexQuest = 1
-            elseif Level  ==  2225 or Level <= 2249 then
-                 ValueQuest = "CakeQuest1"
-                 IndexQuest = 2
-            elseif Level  ==  2250 or Level <= 2274 then
-                 ValueQuest = "CakeQuest2"
-                 IndexQuest = 1
-            elseif Level  ==  2275 or Level <= 2299 then
-                 ValueQuest = "CakeQuest2"
-                 IndexQuest = 2
-            elseif Level  ==  2300 or Level <= 2324 then
-                ValueQuest = "ChocQuest1"
-                IndexQuest = 1
-            elseif Level  ==  2325 or Level <= 2349 then
-                ValueQuest = "ChocQuest1"
-                IndexQuest = 2
-            elseif Level  ==  2350 or Level <= 2374 then
-                ValueQuest = "ChocQuest2"
-                IndexQuest = 1
-            elseif Level  >= 2374 then
-                ValueQuest = "ChocQuest2"
-                IndexQuest = 2
-            end
-        end
-        return {
-			["NameQuest"] = ValueQuest,
-			["LevelQuest"] = IndexQuest,
-			["Spawn"] = SpawnPoint,
-		}
-    end
+ 
+	if getgenv().ret then
+		if Dis > 430 then
+			local tween_s = game:service"TweenService"
+			local info = TweenInfo.new(Dis/Speed, Enum.EasingStyle.Linear)
+			local tween, err = pcall(function()
+				_G.Teleporting = true
+				tween = tween_s:Create(LocalPlayer.Character.HumanoidRootPart, info, {CFrame = CFgo})
+				tween:Play()
+				repeat
+					task.wait() 
+				until Distance(CFgo.Position) <= 430 or not _G.Teleporting
+				tween:Cancel()
+				_G.Teleporting = false
+				task.wait(0.8)
+				if Distance(CFgo.Position) <= 430 then
+					LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
+				end
+			end)
+			if not tween then return err end
+		else
+			LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
+		end
+	end
 end
 
-function IsQuest()
-    return game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible
+function totarget(CFgo)
+	local Dis = Distance(CFgo.Position)
+	if not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
+
+	if Dis < 1000 then
+		Speed = 400
+	elseif Dis >= 1000 then
+		Speed = 350
+	end
+
+	if Dis > 430 then
+		local tween_s = game:service"TweenService"
+		local info = TweenInfo.new(Dis/Speed, Enum.EasingStyle.Linear)
+		local tween, err = pcall(function()
+			_G.Teleporting = true
+			tween = tween_s:Create(LocalPlayer.Character.HumanoidRootPart, info, {CFrame = CFgo})
+			tween:Play()
+			repeat
+				task.wait() 
+			until Distance(CFgo.Position) <= 430 or not _G.Teleporting
+			tween:Cancel()
+			_G.Teleporting = false
+			task.wait(0.8)
+			if Distance(CFgo.Position) <= 430 then
+				LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
+			end
+		end)
+		if not tween then return err end
+	else
+		LocalPlayer.Character.HumanoidRootPart.CFrame = CFgo
+	end
 end
 
 function AcceptQuest(name,index)
@@ -4448,6 +4082,71 @@ function AcceptQuest(name,index)
 	}
 
 	game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+end
+
+function GetAllMob()
+	return Collection:GetTagged("ActiveRig")
+end
+
+isnetworkowner = isnetworkowner or function()
+	return true 
+end
+function BringMob(mob)
+	local Mob = workspace.Enemies:GetChildren()
+	for i,v in pairs(Mob) do
+		if v.Name == mob.Name and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+		    if isnetworkowner(v.HumanoidRootPart) then
+				local CFrameTo = mob.HumanoidRootPart.CFrame
+				v.HumanoidRootPart.CFrame = CFrameTo
+				v.HumanoidRootPart.Size = Vector3.new(70,70,70)
+				v.Humanoid.PlatformStand = true
+				v.Humanoid.Sit = true					
+				v.HumanoidRootPart.CanCollide = false
+			end
+		end
+	end
+end
+
+function GetToolFromTip(Tip)
+	for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+		if v:IsA("Tool") and v.ToolTip == Tip then
+			return v
+		end
+	end
+	if not game.Players.LocalPlayer.Character then return end
+	local v = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool") do
+		if v:IsA("Tool") and v.ToolTip == Tip then
+			return v
+		end
+	end
+end
+function EquipWeapon(Tools)
+	if not game.Players.LocalPlayer.Character then return end
+	if game.Players.LocalPlayer.Backpack:FindFirstChild(Tools) then
+		local tool = game.Players.LocalPlayer.Backpack:FindFirstChild(Tools)
+		wait()
+		game.Players.LocalPlayer.Character.Humanoid:EquipTool(tool)
+	elseif GetToolFromTip(Tools) then
+		game.Players.LocalPlayer.Character.Humanoid:EquipTool(GetToolFromTip(Tools))
+	end
+end
+
+function CheckLevel(LEVEL)
+	local Level = LEVEL or LocalPlayer.Data.Level.Value
+	local CurrentQuest = {}
+	for i,v in pairs(GuideModule.Data.NPCList) do
+		if v.NPCName == GuideModule.Data.LastClosestNPC then
+			CurrentQuest.PositionQuest = CFrame.new(v.Position)
+		end
+	end
+
+	if Level == 1 or Level <= 10 then
+		CurrentQuest.Value = "BanditQuest1"
+		CurrentQuest.Index = 1
+		CurrentQuest.Spawn = "Default"
+	end
+
+	return CurrentQuest
 end
 
 function GetMobName()
@@ -4474,64 +4173,6 @@ function GetMobName()
 		return RealText
 	end
 end
-local LocalPlayer = game.Players.LocalPlayer
-
-local CbFw = getupvalues(require(LocalPlayer.PlayerScripts.CombatFramework))
-local CbFw2 = CbFw[2]
-function getAllBladeHits(Sizes)
-	local Hits = {}
-	local Client = game.Players.LocalPlayer
-	local Enemies = game:GetService("Workspace").Enemies:GetChildren()
-	for i=1,#Enemies do local v = Enemies[i]
-		local Human = v:FindFirstChildOfClass("Humanoid")
-		if Human and Human.RootPart and Human.Health > 0 and Client:DistanceFromCharacter(Human.RootPart.Position) < Sizes+5 then
-			table.insert(Hits,Human.RootPart)
-		end
-	end
-	return Hits
-end
-function GetCurrentBlade() 
-    local p13 = CbFw2.activeController
-    local ret = p13.blades[1]
-    if not ret then return end
-    while ret.Parent~=game.Players.LocalPlayer.Character do ret=ret.Parent end
-    return ret
-end
-function AttackNoCD() 
-	local ac = CbFw2.activeController
-	if ac and ac.equipped then
-		for indexincrement = 1, 1 do
-			local bladehit = getAllBladeHits(60)
-			if #bladehit > 0 then
-				local AcAttack8 = debug.getupvalue(ac.attack, 5)
-				local AcAttack9 = debug.getupvalue(ac.attack, 6)
-				local AcAttack7 = debug.getupvalue(ac.attack, 4)
-				local AcAttack10 = debug.getupvalue(ac.attack, 7)
-				local NumberAc12 = (AcAttack8 * 798405 + AcAttack7 * 727595) % AcAttack9
-				local NumberAc13 = AcAttack7 * 798405
-				(function()
-					NumberAc12 = (NumberAc12 * AcAttack9 + NumberAc13) % 1099511627776
-					AcAttack8 = math.floor(NumberAc12 / AcAttack9)
-					AcAttack7 = NumberAc12 - AcAttack8 * AcAttack9
-				end)()
-				AcAttack10 = AcAttack10 + 1
-				debug.setupvalue(ac.attack, 5, AcAttack8)
-				debug.setupvalue(ac.attack, 6, AcAttack9)
-				debug.setupvalue(ac.attack, 4, AcAttack7)
-				debug.setupvalue(ac.attack, 7, AcAttack10)
-				for k, v in pairs(ac.animator.anims.basic) do
-					v:Play(0.01,0.01,0.01)
-				end
-				if game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool") and ac.blades and ac.blades[1] then 
-					game:GetService("ReplicatedStorage").RigControllerEvent:FireServer("weaponChange",tostring(GetCurrentBlade()))
-					game.ReplicatedStorage.Remotes.Validator:FireServer(math.floor(NumberAc12 / 1099511627776 * 16777215), AcAttack10)
-					game:GetService("ReplicatedStorage").RigControllerEvent:FireServer("hit", bladehit, 2, "") 
-				end
-			end
-		end
-	end
-end
-
 
 local Close = Instance.new("ScreenGui")
 local TextButton = Instance.new("TextButton")
@@ -4555,83 +4196,214 @@ TextButton.MouseButton1Down:connect(function()
     game:GetService("VirtualInputManager"):SendKeyEvent(false,"RightControl",false,game)
 end)
 
-local Rigc = getupvalue(require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework),2)
-local GuideModule = require(game:GetService("ReplicatedStorage").GuideModule)
+getgenv().scripts = {
+    ["AutoFarmLevel"] = false,
+	["Weapons"] = "Melee",
+    ["Edition"] = {
+        ["Swords"] = {
+            ["Pole"] = false,
+            ["Saber"] = false,
+            ["Buddy Sword"] = false,
+            ["Rengoku"] = false,
+            ["LegendarySword"] = false,
+            ["Tushita"] = false,
+            ["Dark Dagger"] = false,
+            ["Cursed Dual Katana"] = false,
+            ["Soul Guitar"] = false,
+            ["Canvander"] = false,
+            ["Spikey Trident"] = false,
+            ["Hallow Scythe"] = false,
+            ["Midnight Blade"] = false,
+        },
+    },
+	Stats = {
+        ["Enabled"] = false,
+        ["Melee"] = 2550,
+        ["Defense"] = 2550,
+        ["Sword"] = 1275,
+        ["Blox Fruit"] = 1275,
+    },
+}
 
-local Window = ui:W1n("Lago Hub","Blox Fruit",0.30,Enum.KeyCode.RightControl)
 
-local Tap = Window:Tap("Farming")
-local Tap2 = Window:Tap("Stats")
+local Window = ui:W1n("Lago Scripts","Edition",0.30,Enum.KeyCode.RightControl)
 
-local tab = Tap:newpage()
-local tab1 = Tap:newpage()
-local tab2 = Tap2:newpage()
+-- tap 1 --
+local Tap = Window:Tap("Edition")
+local edit = Tap:newpage()
+local set_edit = Tap:newpage()
+-- tab 2 --
+local Combats = Window:Tap("Combats")
+-- tab 3 --
+local TelePort = Window:Tap("TelePort")
+-- tab 4 --
+local Stats = Window:Tap("Stats")
+local stats_edit = Stats:newpage()
+-- tab 5 --
+local Settings = Window:Tap("Configuration")
 
-tab:Toggle("AutoFarm",false,function(v)
-	getgenv().Settings["Main"]["AutoFarm"] = v
+edit:Toggle("Auto Farm Level",false,function(v)
+	scripts["AutoFarmLevel"] = v
 end)
-tab:Dropdown("Select Weapon",{"Melee","Sword"},function (v)
-	getgenv().Settings["Main"]["SelectWeapon"] = v
+edit:Dropdown("Select Weapon",{"Melee","Sword"},function (v)
+	scripts["Weapons"] = v
+end)
+
+stats_edit:Toggle("Auto Stats",false,function(v)
+	scripts.Stats["Enabled"] = v
+end)
+stats_edit:Textbox("Melee"," ",function(v)
+	scripts.Stats.Melee = v
+end)
+stats_edit:Textbox("Defense"," ",function(v)
+	scripts.Stats.Defense = v
+end)
+stats_edit:Textbox("Sword"," ",function(v)
+	scripts.Stats.Sword = v
+end)
+stats_edit:Textbox("Blox Fruit","",function(v)
+	scripts.Stats["Blox Fruit"] = v
 end)
 
 spawn(function()
 	while task.wait() do
-		if getgenv().Settings["Main"]["AutoFarm"] then
-			if not IsQuest() then
-				repeat task.wait()
-					totarget(checkQuest("GetPosition"),checkQuest("Quest").Spawn)
-				until Distance(checkQuest("GetPosition").Position) <= 120
-				task.wait(0.68)
-				if Distance(checkQuest("GetPosition").Position) <= 50 then
-					AcceptQuest(checkQuest("Quest").NameQuest,checkQuest("Quest").LevelQuest)
-					repeat wait() until game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible
-				end
-			elseif IsQuest() then
-				local Mob = GetMobName()
-				for i,v in pairs(GetAllMob()) do
-					if Mob and v.Name:lower():sub(1,#Mob) == Mob:lower() and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+		if scripts["AutoFarmLevel"] then
+			if LocalPlayer.Data.Level.Value >= 10 and LocalPlayer.Data.Level.Value <= 300 then
+				for i,v in pairs(workspace.Enemies:GetChildren()) do
+					if v.Name == "Shanda [Lv. 475]" and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
 						repeat wait()
 							BringMob(v)
-							if getgenv().Settings["Main"]["SelectWeapon"] ~= nil then
-								EquipWeapon(tostring(getgenv().Settings["Main"]["SelectWeapon"]))
-							else
-								EquipWeapon("Melee")
+							if scripts["Weapons"] ~= nil or scripts["Weapons"] ~= "" then
+								EquipWeapon(scripts["Weapons"])
 							end
-							tweento(v.HumanoidRootPart.CFrame * CFrame.new(0,30,0))
+							totarget(v.HumanoidRootPart.CFrame * CFrame.new(0,50,0))
 							pcall(function()
 								Rigc.activeController:attack()
 							end)
 							v.HumanoidRootPart.CanCollide = false
 							v.HumanoidRootPart.Size = Vector3.new(70, 70, 70)
-							if sethiddenproperty then
-								sethiddenproperty(game.Players.LocalPlayer,"SimulationRadius",math.huge)
-							end
-						until not getgenv().Settings["Main"]["AutoFarm"] or v.Humanoid.Health <= 0 or not v.Parent or not IsQuest()
+							delay(10,function()
+								v.Humanoid.Health = 0
+							end)
+						until not scripts["AutoFarmLevel"] or v.Humanoid.Health <= 0 or not v.Parent or not LocalPlayer.Data.Level.Value >= 300
+					else
+						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(-7862, 5545, -381))
 					end
 				end
+				repeat task.wait() until LocalPlayer.Data.Level.Value >= 300
 			end
+		end
+		if scripts["AutoFarmLevel"] then
+			--pcall(function()
+				local Q = CheckLevel()
+				if not LocalPlayer.PlayerGui.Main.Quest.Visible then
+					repeat task.wait()
+						totarget_spawn(Q.PositionQuest,Q.Spawn)
+					until Distance(Q.PositionQuest.Position) <= 120
+					task.wait(1)
+					if Distance(Q.PositionQuest.Position) <= 50 then
+						AcceptQuest(Q.Value,Q.Index)
+						repeat task.wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
+					end
+				elseif LocalPlayer.PlayerGui.Main.Quest.Visible == true then
+					Q.Mob = GetMobName()
+					for i,v in pairs(GetAllMob()) do
+						if Q.Mob and v.Name:lower():sub(1,#Q.Mob) == Q.Mob:lower() and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+							repeat wait()
+								BringMob(v)
+								if scripts["Weapons"] ~= nil or scripts["Weapons"] ~= "" then
+									EquipWeapon(scripts["Weapons"])
+								end
+								totarget(v.HumanoidRootPart.CFrame * CFrame.new(0,50,0))
+								pcall(function()
+                                    Rigc.activeController:attack()
+                                end)
+								v.HumanoidRootPart.CanCollide = false
+								v.HumanoidRootPart.Size = Vector3.new(70, 70, 70)
+								delay(10,function()
+									v.Humanoid.Health = 0
+								end)
+							until not scripts["AutoFarmLevel"] or v.Humanoid.Health <= 0 or not v.Parent or not LocalPlayer.PlayerGui.Main.Quest.Visible
+						end
+					end
+				end
+			--end)
+		end
+	end
+end)
+
+spawn(function()
+	while task.wait() do
+		if scripts.Stats.Enabled then
+            if LocalPlayer.Data.Stats.Melee.Level.Value ~= scripts.Stats.Melee then
+                local args = {
+                    [1] = "AddPoint",
+                    [2] = "Melee",
+                    [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
+                }
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+            end 
+            if LocalPlayer.Data.Stats.Defense.Level.Value ~= scripts.Stats.Defense then
+                local args = {
+                    [1] = "AddPoint",
+                    [2] = "Defense",
+                    [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
+                }
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+            end 
+            if LocalPlayer.Data.Stats.Sword.Level.Value ~= scripts.Stats.Sword then
+                local args = {
+                    [1] = "AddPoint",
+                    [2] = "Sword",
+                    [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
+                }
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+            end 
+            if LocalPlayer.Data.Stats.DevilFruit.Level.Value ~= scripts.Stats["Blox Fruit"] then
+                local args = {
+                    [1] = "AddPoint",
+                    [2] = "Demon Fruit",
+                    [3] = game:GetService("Players").LocalPlayer.Data.Points.Value
+                }
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+            end
+		end
+	end
+end)
+
+
+spawn(function()
+	while task.wait() do
+		if scripts["AutoFarmLevel"] then
+			pcall(function()
+				Rigc.activeController.timeToNextAttack = 0
+				Rigc.activeController.hitboxMagnitude = 100
+				Rigc.activeController.focusStart = 0
+				Rigc.activeController.blocking = false
+				Rigc.activeController.attacking = false
+				Rigc.activeController.humanoid.AutoRotate = true
+				Rigc.activeController.increment = Maxincrement()
+				if Rigc.activeController.data then
+					Rigc.activeController.data.attackStartCallback = function()end
+				end
+				Attack()
+			end)
 		end
 	end
 end)
 spawn(function()
 	while task.wait() do
-		if getgenv().Settings["Main"]["AutoFarm"] then
+		if scripts["AutoFarmLevel"] then
 			pcall(function()
-				Rigc.activeController.timeToNextAttack = 0
-				Rigc.activeController.hitboxMagnitude = 50
-                Rigc.activeController.increment = #Rigc.activeController.anims.basic
-				AttackNoCD() 
+				Attack()
 			end)
 		end
 	end
 end)
-
 task.spawn(function()
 	game:GetService("RunService").Stepped:Connect(function()
 		pcall(function()
-			if 
-            getgenv().Settings["Main"]["AutoFarm"] 
-            then
+			if scripts["AutoFarmLevel"] then
 				if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
 					if not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyVelocity1") then
 						if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
@@ -4657,5 +4429,3 @@ task.spawn(function()
 		end)
 	end)
 end)
-
--- loadstring(game:HttpGet("https://raw.githubusercontent.com/Lago602447/Club/main/script.lua"))()
