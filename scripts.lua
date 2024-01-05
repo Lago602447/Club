@@ -4242,6 +4242,7 @@ local Combats = Window:Tap("Combats")
 local TelePort = Window:Tap("TelePort")
 -- tab 4 --
 local Stats = Window:Tap("Stats")
+local stats_edit = Tap:newpage()
 -- tab 5 --
 local Settings = Window:Tap("Configuration")
 
@@ -4252,19 +4253,19 @@ edit:Dropdown("Select Weapon",{"Melee","Sword"},function (v)
 	scripts["Weapons"] = v
 end)
 
-Stats:Toggle("Auto Stats",false,function(v)
+stats_edit:Toggle("Auto Stats",false,function(v)
 	scripts.Stats["Enabled"] = v
 end)
-tab:Textbox("Melee"," ",function(v)
+stats_edit:Textbox("Melee"," ",function(v)
 	scripts.Stats.Melee = v
 end)
-tab:Textbox("Defense"," ",function(v)
+stats_edit:Textbox("Defense"," ",function(v)
 	scripts.Stats.Defense = v
 end)
-tab:Textbox("Sword"," ",function(v)
+stats_edit:Textbox("Sword"," ",function(v)
 	scripts.Stats.Sword = v
 end)
-tab:Textbox("Blox Fruit","",function(v)
+stats_edit:Textbox("Blox Fruit","",function(v)
 	scripts.Stats["Blox Fruit"] = v
 end)
 
