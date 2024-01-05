@@ -4253,7 +4253,7 @@ edit:Dropdown("Select Weapon",{"Melee","Sword"},function (v)
 end)
 
 Stats:Toggle("Auto Stats",false,function(v)
-	scripts.Stats.Enabled = v
+	scripts.Stats["Enabled"] = v
 end)
 tab:Textbox("Melee"," ",function(v)
 	scripts.Stats.Melee = v
