@@ -4226,7 +4226,7 @@ spawn(function()
 				if not LocalPlayer.PlayerGui.Main.Quest.Visible then
 					repeat task.wait()
 						print("F")
-						totarget_spawn(Q.PositionQuest)
+						totarget_spawn(Q.PositionQuest,Q.Spawn)
 					until Distance(Q.PositionQuest.Position) <= 120
 					wait(1)
 					print("G")
