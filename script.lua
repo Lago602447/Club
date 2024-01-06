@@ -1382,13 +1382,13 @@ end
 -- 	return shared.dnew(data)
 -- end
 
-
+local LocalPlayer = game.Players.LocalPlayer
 function Distance(POS)
-	return LocalPlayer:DistanceFromCharacter(POS)
+	return (POS - LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
 end
 function totarget_spawn(CFgo,npc)
-    local Dis = (CFgo.Position - game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
-    local Data = game:GetService("Players").LocalPlayer.Data
+    local Dis = (CFgo.Position - LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
+    local Data = LocalPlayer.Data
 	local PlayerSpawns = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates:FindFirstChild(npc).Part
 
     if not LocalPlayer.Character then return end
@@ -1403,11 +1403,11 @@ function totarget_spawn(CFgo,npc)
     if Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
         getgenv().SpanwPass = true
     end
-    if game.PlaceId == 4442272183 and Distance(PlayerSpawns.Position) < 3000 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
+    if SecondSea and Distance(PlayerSpawns.Position) < 3000 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
         getgenv().SpanwPass = true
-    elseif game.PlaceId == 2753915549 and Distance(PlayerSpawns.Position) < 1500 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
+    elseif FirstSea == 2753915549 and Distance(PlayerSpawns.Position) < 1500 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
         getgenv().SpanwPass = true
-    elseif game.PlaceId == 7449423635 and Distance(PlayerSpawns.Position) < 4500 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
+    elseif ThirdSea == 7449423635 and Distance(PlayerSpawns.Position) < 4500 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
         getgenv().SpanwPass = true
     end
 
@@ -1450,10 +1450,10 @@ end
 function toTarget(targetCFrame)
 	local tweenfunc = {}
 
-	Distance = (targetCFrame.Position - game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
-	if Distance < 1000 then
+	Discheck = (targetCFrame.Position - game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
+	if Discheck < 1000 then
 		Speed = 325
-	elseif Distance >= 1000 then
+	elseif Discheck >= 1000 then
 		Speed = 315
 	end
 
