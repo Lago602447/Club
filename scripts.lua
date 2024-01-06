@@ -1557,8 +1557,8 @@ spawn(function()
 			if LocalPlayer.Data.Level.Value >= 1 and LocalPlayer.Data.Level.Value <= 10 then
 				if not LocalPlayer.PlayerGui.Main.Quest.Visible then
 					repeat task.wait()
-						totarget_spawn(Q.Npc,"Default")
-					until Distance(Q.Npc.Position) <= 120
+						totarget_spawn(CFrame.new(Q.Npc),"Default")
+					until Distance(CFrame.new(Q.Npc).Position) <= 120
 					if Distance(v.Model:FindFirstChild("QuestFloor",true).Position) <= 50 then
 						local args = {
 							[1] = "StartQuest",
