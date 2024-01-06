@@ -1562,7 +1562,7 @@ spawn(function()
 					repeat task.wait()
 						totarget_spawn(Q.Npc,"Default")
 					until Distance(Q.Npc.Position) <= 120
-					if Distance(v.Model:FindFirstChild("QuestFloor",true).Position) <= 50 then
+					if Distance(Q.Npc.Position) <= 50 then
 						local args = {
 							[1] = "StartQuest",
 							[2] = Q.Name,
