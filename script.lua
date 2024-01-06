@@ -1053,9 +1053,9 @@ end
 
 local LocalPlayer = game.Players.LocalPlayer
 local Rigc = getupvalue(require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework),2)
-local PC = require(LocalPlayer.PlayerScripts.CombatFramework.Particle)
-local RL = require(game:GetService("ReplicatedStorage").CombatFramework.RigLib)
-local DMG = require(LocalPlayer.PlayerScripts.CombatFramework.Particle.Damage)
+-- local PC = require(LocalPlayer.PlayerScripts.CombatFramework.Particle)
+-- local RL = require(game:GetService("ReplicatedStorage").CombatFramework.RigLib)
+-- local DMG = require(LocalPlayer.PlayerScripts.CombatFramework.Particle.Damage)
 local cd = 0
 local Quest = require(game:GetService("ReplicatedStorage").Quests)
 local GuideModule = require(game:GetService("ReplicatedStorage").GuideModule)
@@ -1078,9 +1078,9 @@ elseif game.PlaceId == 4442272183 then
 elseif game.PlaceId == 7449423635 then
 	ThirdSea = true
 end
-if not shared.orl then shared.orl = RL.wrapAttackAnimationAsync end
-if not shared.cpc then shared.cpc = PC.play end
-if not shared.dnew then shared.dnew = DMG.new end
+-- if not shared.orl then shared.orl = RL.wrapAttackAnimationAsync end
+-- if not shared.cpc then shared.cpc = PC.play end
+-- if not shared.dnew then shared.dnew = DMG.new end
 for i,v in pairs(NPCList) do
 	local Model = v.Model
 	if Model:FindFirstChild("QuestFloor",true) then
@@ -1193,6 +1193,172 @@ function Checklevel(LEVEL)
 		end
 	end
 
+	if game.PlaceId == 2753915549 then
+		if Level == 1 or Level <= 9 then
+			 CurrentQuest.Spawn = "Default"
+		elseif Level == 10 or Level <= 14 then
+			 CurrentQuest.Spawn = "Jungle"
+		elseif Level == 15 or Level <= 29 then
+			 CurrentQuest.Spawn = "Jungle"
+		elseif Level == 30 or Level <= 39 then
+			 CurrentQuest.Spawn = "Pirate"
+		elseif Level == 40 or Level <= 59 then
+			 CurrentQuest.Spawn = "Pirate"
+		elseif Level == 60 or Level <= 74 then
+			 CurrentQuest.Spawn = "Desert"
+		elseif Level == 75 or Level <= 89 then
+			 CurrentQuest.Spawn = "Desert"
+		elseif Level == 90 or Level <= 99 then
+			 CurrentQuest.Spawn = "Snow"
+		elseif Level == 100 or Level <= 119 then
+			 CurrentQuest.Spawn = "Snow"
+		elseif Level == 120 or Level <= 149 then 
+			 CurrentQuest.Spawn = "Marinebase"
+		elseif Level == 150 or Level <= 174 then
+			 CurrentQuest.Spawn = "Sky"
+		elseif Level == 174 or Level <= 189 then
+			 CurrentQuest.Spawn = "Sky"
+		elseif Level == 190 or Level <= 249 then
+			 CurrentQuest.Spawn = "Prison"
+		elseif Level == 220 or Level <= 224 then
+		     CurrentQuest.Spawn = "Prison"
+		elseif Level == 250  or Level <= 274 then
+			 CurrentQuest.Spawn = "Colosseum"
+		elseif Level == 275  or Level <= 299 then
+			 CurrentQuest.Spawn = "Colosseum"
+		elseif Level == 300  or Level <= 329 then
+			 CurrentQuest.Spawn = "Magma"
+		elseif Level == 330  or Level <= 374 then
+			 CurrentQuest.Spawn = "Magma"
+		elseif Level == 375  or Level <= 399 then
+			 CurrentQuest.Spawn = "Fishman"
+		elseif Level == 400  or Level <= 449 then
+			 CurrentQuest.Spawn = "Fishman"
+		elseif Level == 450  or Level <= 474 then
+			 CurrentQuest.Spawn = "Sky"
+		elseif Level == 475  or Level <= 524 then
+			 CurrentQuest.Spawn = "Sky"
+		elseif Level == 525  or Level <= 549 then
+			 CurrentQuest.Spawn = "Sky2"
+		elseif Level == 550  or Level <= 624 then
+			 CurrentQuest.Spawn = "Sky2"
+		elseif Level == 625  or Level <= 649 then
+			 CurrentQuest.Spawn = "Fountain"
+		elseif Level >= 650  then
+			 CurrentQuest.Spawn = "Fountain"
+		end
+	-- Second Sea
+	elseif game.PlaceId == 4442272183 then
+		if Level == 700  or Level <= 724 then
+			 CurrentQuest.Spawn = "Area1Quest"
+		elseif Level == 725  or Level <= 774 then
+			 CurrentQuest.Spawn = "Area1Quest"
+		elseif Level == 775  or Level <= 799 then  
+			 CurrentQuest.Spawn = "Area2Quest"
+		elseif Level == 800  or Level <= 874 then
+			 CurrentQuest.Spawn = "Area2Quest"
+		elseif Level == 875  or Level <= 899 then
+			 CurrentQuest.Spawn = "MarineQuest3"
+		elseif Level == 900  or Level <= 949 then
+			 CurrentQuest.Spawn = "MarineQuest3"
+		elseif Level == 950  or Level <= 974 then
+			 CurrentQuest.Spawn = "ZombieQuest"
+		elseif Level == 975 or Level <= 999 then
+			 CurrentQuest.Spawn = "ZombieQuest"
+		elseif Level == 1000 or Level <= 1049 then
+			 CurrentQuest.Spawn = "SnowMountainQuest"
+		elseif Level == 1050 or Level <= 1099 then
+			 CurrentQuest.Spawn = "SnowMountainQuest"
+		elseif Level == 1100 or Level <= 1124 then
+			 CurrentQuest.Spawn = "IceSideQuest"
+		elseif Level == 1125 or Level <= 1174 then
+			 CurrentQuest.Spawn = "IceSideQuest"
+		elseif Level == 1175 or Level <= 1199 then
+			 CurrentQuest.Spawn = "FireSideQuest"
+		elseif Level == 1200 or Level <= 1249 then
+			 CurrentQuest.Spawn = "FireSideQuest"
+		elseif Level == 1250 or Level <= 1274 then
+			 CurrentQuest.Spawn = "ShipQuest1"
+		elseif Level == 1275 or Level <= 1299 then 
+			 CurrentQuest.Spawn = "ShipQuest1"
+		elseif Level == 1300 or Level <= 1324 then
+			 CurrentQuest.Spawn = "ShipQuest2"
+		elseif Level == 1325 or Level <= 1349 then
+			 CurrentQuest.Spawn = "ShipQuest2"
+		elseif Level == 1350 or Level <= 1374 then
+			 CurrentQuest.Spawn = "FrostQuest"
+		elseif Level == 1375 or Level <= 1424 then 
+			 CurrentQuest.Spawn = "FrostQuest"
+		elseif Level == 1425 or Level <= 1449 then
+			 CurrentQuest.Spawn = "ForgottenQuest"
+		elseif Level >= 1450 then
+			 CurrentQuest.Spawn = "ForgottenQuest"
+		end
+	-- Third Sea
+	else
+		if Level == 1450 or Level <= 1524 then
+			 CurrentQuest.Spawn = "PiratePortQuest"
+		elseif Level == 1525 or Level <= 1574 then
+			 CurrentQuest.Spawn = "PiratePortQuest"
+		elseif Level == 1575 or Level <= 1599 then
+			 CurrentQuest.Spawn = "AmazonQuest"
+		elseif Level == 1600 or Level <= 1624 then
+			 CurrentQuest.Spawn = "AmazonQuest"
+		elseif Level == 1624 or Level <= 1649 then
+			 CurrentQuest.Spawn = "AmazonQuest2"
+		elseif Level == 1650 or Level <= 1699 then
+			 CurrentQuest.Spawn = "AmazonQuest2"
+		elseif Level == 1700 or Level <= 1724 then
+			 CurrentQuest.Spawn = "MarineTreeIsland"
+		elseif Level == 1725 or Level <= 1774 then
+			 CurrentQuest.Spawn = "MarineTreeIsland"
+		elseif Level == 1775 or Level <= 1799 then
+			 CurrentQuest.Spawn = "DeepForestIsland3"
+		elseif Level == 1800 or Level <= 1824 then
+			 CurrentQuest.Spawn = "DeepForestIsland3"
+		elseif Level == 1825 or Level <= 1849 then
+			 CurrentQuest.Spawn = "DeepForestIsland"
+		elseif Level == 1850 or Level <= 1899 then
+			 CurrentQuest.Spawn = "DeepForestIsland"
+		elseif Level == 1900 or Level <= 1924 then
+			 CurrentQuest.Spawn = "DeepForestIsland2"
+		elseif Level  ==  1925 or Level <= 1974 then
+			 CurrentQuest.Spawn = "DeepForestIsland2"
+		elseif Level  ==  1975 or Level <= 1999 then
+			 CurrentQuest.Spawn = "HauntedQuest1"
+		elseif Level  ==  2000 or Level <= 2024 then
+			 CurrentQuest.Spawn = "HauntedQuest1"
+		elseif Level  ==  2025 or Level <= 2049 then
+			 CurrentQuest.Spawn = "HauntedQuest2"
+		elseif Level  ==  2050 or Level <= 2074 then
+			 CurrentQuest.Spawn = "HauntedQuest2"
+		elseif Level  ==  2075 or Level <= 2099 then
+			 CurrentQuest.Spawn = "NutsIslandQuest"
+		elseif Level  ==  2100 or Level <= 2124 then
+			 CurrentQuest.Spawn = "NutsIslandQuest"
+		elseif Level  ==  2125 or Level <= 2149 then
+			 CurrentQuest.Spawn = "IceCreamIslandQuest"
+		elseif Level  ==  2150 or Level <= 2199 then
+			 CurrentQuest.Spawn = "IceCreamIslandQuest"
+		elseif Level  ==  2200 or Level <= 2224 then
+			 CurrentQuest.Spawn = "CakeQuest1"
+		elseif Level  ==  2225 or Level <= 2249 then
+			 CurrentQuest.Spawn = "CakeQuest1"
+		elseif Level  ==  2250 or Level <= 2274 then
+			 CurrentQuest.Spawn = "CakeQuest2"
+		elseif Level  ==  2275 or Level <= 2299 then
+			 CurrentQuest.Spawn = "CakeQuest2"
+		elseif Level  ==  2300 or Level <= 2324 then
+			CurrentQuest.Spawn = "ChocQuest1"
+		elseif Level  ==  2325 or Level <= 2349 then
+			CurrentQuest.Spawn = "ChocQuest1"
+		elseif Level  ==  2350 or Level <= 2374 then
+			CurrentQuest.Spawn = "ChocQuest2"
+		elseif Level  >= 2374 then
+			CurrentQuest.Spawn = "ChocQuest2"
+		end
+	end
+
 	return CurrentQuest
 end
 
@@ -1211,19 +1377,21 @@ function Maxincrement()
 	local maxincrement = #Rigc.activeController.anims.basic
 	return maxincrement
 end
-DMG.new = function(data)
-	data.Value = DamaageText[math.random(1,#DamaageText)]
-	return shared.dnew(data)
-end
+-- DMG.new = function(data)
+-- 	data.Value = DamaageText[math.random(1,#DamaageText)]
+-- 	return shared.dnew(data)
+-- end
 
-function spawncheck(Name)
-    return game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[Name].Part
+
+function Distance(POS)
+	return LocalPlayer:DistanceFromCharacter(POS)
 end
 function totarget_spawn(CFgo,npc)
-    local Dis = Distance(CFgo.Position)
+    local Dis = (CFgo.Position - game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
     local Data = game:GetService("Players").LocalPlayer.Data
+	local PlayerSpawns = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates:FindFirstChild(npc).Part
 
-    if not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
+    if not LocalPlayer.Character then return end
     if Dis < 1000 then
         Speed = 400
     elseif Dis >= 1000 then
@@ -1231,30 +1399,31 @@ function totarget_spawn(CFgo,npc)
     end
 
     getgenv().SpanwPass = false
-    getgenv().DistancePass = false
 
-    if Data.SpawnPoint.Value == spawncheck(npc) and Data.LastSpawnPoint.Value == spawncheck(npc) then
+    if Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
         getgenv().SpanwPass = true
     end
-    if game.PlaceId == 4442272183 and Distance(spawncheck(npc).Position) < 3000 then
-        getgenv().DistancePass = true
-    elseif game.PlaceId == 2753915549 and Distance(spawncheck(npc).Position) < 1500 then
-        getgenv().DistancePass = true
-    elseif game.PlaceId == 7449423635 and Distance(spawncheck(npc).Position) < 4500 then
-        getgenv().DistancePass = true
+    if game.PlaceId == 4442272183 and Distance(PlayerSpawns.Position) < 3000 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
+        getgenv().SpanwPass = true
+    elseif game.PlaceId == 2753915549 and Distance(PlayerSpawns.Position) < 1500 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
+        getgenv().SpanwPass = true
+    elseif game.PlaceId == 7449423635 and Distance(PlayerSpawns.Position) < 4500 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
+        getgenv().SpanwPass = true
     end
 
     if getgenv().SpanwPass == false then
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0,1000,0)
         game.Players.LocalPlayer.Character.Humanoid.Health = 0
         repeat task.wait()
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = spawncheck(npc).CFrame
-            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetLastSpawnPoint",spawncheck(npc))
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PlayerSpawns.CFrame
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetLastSpawnPoint",npc)
             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
-        until (Data.SpawnPoint.Value == spawncheck(npc) and Data.LastSpawnPoint.Value == spawncheck(npc))
+        until (Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc)
         getgenv().SpanwPass = true
     end
 
-    if getgenv().SpanwPass and getgenv().DistancePass then
+	
+    if getgenv().SpanwPass then
         if Dis > 430 then
             local tween_s = game:service"TweenService"
             local info = TweenInfo.new(Dis/Speed, Enum.EasingStyle.Linear)
@@ -1354,6 +1523,9 @@ function EquipWeapon(Tools)
 	elseif GetToolFromTip(Tools) then
 		game.Players.LocalPlayer.Character.Humanoid:EquipTool(GetToolFromTip(Tools))
 	end
+end
+isnetworkowner = function()
+	return true
 end
 function BringMob(mob)
 	local Mob = workspace.Enemies:GetChildren()
@@ -1554,44 +1726,24 @@ spawn(function()
 	while task.wait() do
 		if scripts["AutoFarmLevel"] then
 			local Q = Checklevel()
-			if LocalPlayer.Data.Level.Value >= 1 and LocalPlayer.Data.Level.Value <= 10 then
-				if not LocalPlayer.PlayerGui.Main.Quest.Visible then
-					repeat task.wait()
-						totarget_spawn(CFrame.new(Q.Npc),"Default")
-					until Distance(CFrame.new(Q.Npc).Position) <= 120
-					if Distance(v.Model:FindFirstChild("QuestFloor",true).Position) <= 50 then
-						local args = {
-							[1] = "StartQuest",
-							[2] = Q.Name,
-							[3] = Q.Value
-						}
-					
-						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
-						repeat wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
-					end
-				elseif LocalPlayer.PlayerGui.Main.Quest.Visible then
-					Q.Mob = GetMobName()
-					for i,v in pairs(GetAllMob()) do
-						if Q.Mob and v.Name:lower():sub(1,#Q.Mob) == Q.Mob:lower() and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then							
-							repeat wait()
-								BringMob(v)
-								EquipWeapon("Melee")
-								toTarget(v.HumanoidRootPart.CFrame * CFrame.new(0,50,0))
-								pcall(function()
-                                    Rigc.activeController:attack()
-                                end)
-								v.HumanoidRootPart.CanCollide = false
-								v.HumanoidRootPart.Size = Vector3.new(70, 70, 70)
-								delay(10,function()
-									v.Humanoid.Health = 0
-								end)
-							until not scripts["AutoFarmLevel"] or v.Humanoid.Health <= 0 or not v.Parent or not LocalPlayer.PlayerGui.Main.Quest.Visible
-						end
-					end
+			if not LocalPlayer.PlayerGui.Main.Quest.Visible then
+				repeat task.wait()
+					totarget_spawn(Q.Npc,Q.Spawn)
+				until Distance(Q.Npc.Position) <= 120
+				if Distance(Q.Npc.Position) <= 50 then
+					local args = {
+						[1] = "StartQuest",
+						[2] = Q.Name,
+						[3] = Q.Value
+					}
+				
+					game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+					repeat wait() until LocalPlayer.PlayerGui.Main.Quest.Visible
 				end
-			elseif LocalPlayer.Data.Level.Value >= 10 and LocalPlayer.Data.Level.Value <= 120 then
-				for i,v in pairs(workspace.Enemies:GetChildren()) do
-					if v.Name == "Shanda [Lv. 475]" and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then						
+			elseif LocalPlayer.PlayerGui.Main.Quest.Visible then
+				Q.Mob = GetMobName()
+				for i,v in pairs(GetAllMob()) do
+					if Q.Mob and v.Name:lower():sub(1,#Q.Mob) == Q.Mob:lower() and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then							
 						repeat wait()
 							BringMob(v)
 							EquipWeapon("Melee")
@@ -1604,9 +1756,7 @@ spawn(function()
 							delay(10,function()
 								v.Humanoid.Health = 0
 							end)
-						until not scripts["AutoFarmLevel"] or v.Humanoid.Health <= 0 or not v.Parent
-					else
-						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(-7862, 5545, -381))
+						until not scripts["AutoFarmLevel"] or v.Humanoid.Health <= 0 or not v.Parent or not LocalPlayer.PlayerGui.Main.Quest.Visible
 					end
 				end
 			end
@@ -1656,7 +1806,7 @@ end)
 task.spawn(function()
 	game:GetService("RunService").Stepped:Connect(function()
 		pcall(function()
-			if _G.AutoKaitan then
+			if scripts["AutoFarmLevel"] then
 				if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
 					if not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyVelocity1") then
 						if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
