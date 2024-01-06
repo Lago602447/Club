@@ -67,23 +67,12 @@ function totarget_spawn(CFgo,npc)
     end
 end
 
-function CFrameQuest()
-    local Npc = require(game:GetService("ReplicatedStorage").GuideModule)
-    local Pos
-    for i,v in pairs(Npc.Data.NPCList) do
-        if v.NPCName == Npc.Data.LastClosestNPC then
-            Pos = CFrame.new(v.Position)
-        end
-    end
-    return Pos
-end
-
 getgenv().use = not getgenv().use
 
 spawn(function()
     while task.wait() do
         if use then
-            totarget_spawn(CFrame.new(-1496, 39, 35),"Jungle")
+            totarget_spawn(CFrame.new(932, 7, 4484),"Desert")
         end
     end
 end)
