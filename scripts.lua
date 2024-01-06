@@ -1341,12 +1341,18 @@ local teleport = win:Tab("Teleport")
 local Settings = win:Tab("Configuration")
 
 local Mains = tab:Section("Mains")
-local Directs = Combats:Section("Stats")
-local Setup_Stats = Combats:Section("Setup Stats")
+if FirstSea then
+    local SecondTab = tab:Section("Main Travel")
+end
+if SecondSea then
+    local SecondTab = tab:Section("Dressrosa")
+end
+local Directs = Stats:Section("Stats")
+local Setup_Stats = Stats:Section("Setup Stats")
 
-local world_tp = Combats:Section("World Teleport Selection")
-local island_tp = Combats:Section("Island Teleport Selection")
-local npc_tp = Combats:Section("Npc Teleport Selection")
+local world_tp = teleport:Section("World Teleport Selection")
+local island_tp = teleport:Section("Island Teleport Selection")
+local npc_tp = teleport:Section("Npc Teleport Selection")
 
 local Sword = Mains:MultiDropdown("Select Sword", Sword_List,Sword_List,"Dropdown", function(v)
 	_G.Selects_Sword = v
@@ -1361,25 +1367,25 @@ Mains:Toggle("Auto Farm Level", scripts["AutoFarmLevel"],"Toggle", function(v)
 	SaveSetting()
 end)
 if FirstSea then
-    Mains:Toggle("Player Hunter Quest", scripts.Edition["PlayerHunterQuest"],"Toggle", function(v)
+    SecondTab:Toggle("Player Hunter Quest", scripts.Edition["PlayerHunterQuest"],"Toggle", function(v)
         scripts.Edition["PlayerHunterQuest"] = v
         SaveSetting()
     end)
 end
 if SecondSea then
-    Mains:Toggle("Factory", scripts.Edition["Factory"],"Toggle", function(v)
+    SecondTab:Toggle("Factory", scripts.Edition["Factory"],"Toggle", function(v)
         scripts.Edition["Factory"] = v
         SaveSetting()
     end)
-    Mains:Toggle("Bartilo Quest", scripts.Edition["Bartilo"],"Toggle", function(v)
+    SecondTab:Toggle("Bartilo Quest", scripts.Edition["Bartilo"],"Toggle", function(v)
         scripts.Edition["Bartilo"] = v
         SaveSetting()
     end)
-    Mains:Toggle("Flower Quest", scripts.Edition["Flower"],"Toggle", function(v)
+    SecondTab:Toggle("Flower Quest", scripts.Edition["Flower"],"Toggle", function(v)
         scripts.Edition["Flower"] = v
         SaveSetting()
     end)
-    Mains:Toggle("Race v3 Quest", scripts.Edition["Racev3"],"Toggle", function(v)
+    SecondTab:Toggle("Race v3 Quest", scripts.Edition["Racev3"],"Toggle", function(v)
         scripts.Edition["Racev3"] = v
         SaveSetting()
     end)
@@ -1392,17 +1398,17 @@ Directs:Toggle("Auto Stats", scripts.Stats["Enabled"],"Toggle", function(v)
     SaveSetting()
 end)
 
-Setup_Stats:Textbox("Melee", true, function(t)
-	print(t)
+Setup_Stats:Textbox("Melee", false, function(t)
+	print(t,"Melee")
 end)
-Setup_Stats:Textbox("Defense", true, function(t)
-	print(t)
+Setup_Stats:Textbox("Defense", false, function(t)
+	print(t,"Defense")
 end)
-Setup_Stats:Textbox("Sword", true, function(t)
-	print(t)
+Setup_Stats:Textbox("Sword", false, function(t)
+	print(t,"Sword")
 end)
-Setup_Stats:Textbox("Devil Fruit", true, function(t)
-	print(t)
+Setup_Stats:Textbox("Devil Fruit", false, function(t)
+	print(t,"Fruit")
 end)
 
 -- tp section --
@@ -1423,13 +1429,13 @@ end
 island_tp:Dropdown("Select Island", IslandTable,"","Dropdown", function(t)
 	print(t)
 end)
-island_tp:Toggle("TelePort", true,"Toggle", function(t)
+island_tp:Toggle("TelePort", false,"Toggle", function(t)
 	print(t)
 end)
 
 npc_tp:Dropdown("Select Npc", quest_fordropdown,"","Dropdown", function(t)
 	print(t)
 end)
-npc_tp:Toggle("TelePort", true,"Toggle", function(t)
+npc_tp:Toggle("TelePort", false,"Toggle", function(t)
 	print(t)
 end)
