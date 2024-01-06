@@ -1333,6 +1333,7 @@ local win = AlphaLib:New({
 	Name = "Lago Edition Scripts",
 	FolderToSave = "Lago"
 })
+local MainTab,SecondTab
 local tab = win:Tab("Main")
 local Combats = win:Tab("Combats")
 local Stats = win:Tab("Stats")
