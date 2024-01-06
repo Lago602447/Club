@@ -1333,7 +1333,6 @@ local win = AlphaLib:New({
 	Name = "Lago Edition Scripts",
 	FolderToSave = "Lago"
 })
-local MainTab,SecondTab
 local tab = win:Tab("Main")
 local Combats = win:Tab("Combats")
 local Stats = win:Tab("Stats")
@@ -1342,12 +1341,9 @@ local teleport = win:Tab("Teleport")
 local Settings = win:Tab("Configuration")
 
 local Mains = tab:Section("Mains")
-if FirstSea then
-    local MainTab = tab:Section("Main Travel")
-end
-if SecondSea then
-    local SecondTab = tab:Section("Dressrosa")
-end
+local MainTab = tab:Section("Main Travel")
+local SecondTab = tab:Section("Dressrosa")
+
 local Directs = Stats:Section("Stats")
 local Setup_Stats = Stats:Section("Setup Stats")
 
