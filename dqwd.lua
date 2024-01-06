@@ -1223,7 +1223,7 @@ end
 function totarget_spawn(CFgo,npc)
     local Dis = Distance(CFgo.Position)
     local Data = game:GetService("Players").LocalPlayer.Data
-	local PlayerSpawn = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[npc].Part
+	local PlayerSpawns = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[npc].Part
 
     if not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
     if Dis < 1000 then
