@@ -1219,6 +1219,9 @@ end
 function spawncheck(Name)
     return game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[Name].Part
 end
+function Distance(POS)
+	return LocalPlayer:DistanceFromCharacter(POS)
+end
 function totarget_spawn(CFgo,npc)
     local Dis = Distance(CFgo.Position)
     local Data = game:GetService("Players").LocalPlayer.Data
