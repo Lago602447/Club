@@ -1342,7 +1342,7 @@ local Settings = win:Tab("Configuration")
 
 local Mains = tab:Section("Mains")
 if FirstSea then
-    local SecondTab = tab:Section("Main Travel")
+    local MainTab = tab:Section("Main Travel")
 end
 if SecondSea then
     local SecondTab = tab:Section("Dressrosa")
@@ -1367,7 +1367,7 @@ Mains:Toggle("Auto Farm Level", scripts["AutoFarmLevel"],"Toggle", function(v)
 	SaveSetting()
 end)
 if FirstSea then
-    SecondTab:Toggle("Player Hunter Quest", scripts.Edition["PlayerHunterQuest"],"Toggle", function(v)
+    MainTab:Toggle("Player Hunter Quest", scripts.Edition["PlayerHunterQuest"],"Toggle", function(v)
         scripts.Edition["PlayerHunterQuest"] = v
         SaveSetting()
     end)
