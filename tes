@@ -10,6 +10,10 @@ do  local ui =  game:GetService("CoreGui"):FindFirstChild("AOSUDHBAJSD46857984")
 
 do  local ui =  game:GetService("CoreGui"):FindFirstChild("AOSUDHBAJSD46857984.2")  if ui then ui:Destroy() end end
 
+isnetworkowner = function()
+	return true
+end
+
 local Alpha = Instance.new("ScreenGui")
 Alpha.Name = ("AOSUDHBAJSD46857984")
 Alpha.Parent = game.CoreGui
