@@ -1371,8 +1371,7 @@ if FirstSea then
         scripts.Edition["PlayerHunterQuest"] = v
         SaveSetting()
     end)
-end
-if SecondSea then
+elseif SecondSea then
     SecondTab:Toggle("Factory", scripts.Edition["Factory"],"Toggle", function(v)
         scripts.Edition["Factory"] = v
         SaveSetting()
