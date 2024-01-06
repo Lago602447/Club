@@ -1053,9 +1053,9 @@ end
 
 local LocalPlayer = game.Players.LocalPlayer
 local Rigc = getupvalue(require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework),2)
-local PC = require(LocalPlayer.PlayerScripts.CombatFramework.Particle)
-local RL = require(game:GetService("ReplicatedStorage").CombatFramework.RigLib)
-local DMG = require(LocalPlayer.PlayerScripts.CombatFramework.Particle.Damage)
+-- local PC = require(LocalPlayer.PlayerScripts.CombatFramework.Particle)
+-- local RL = require(game:GetService("ReplicatedStorage").CombatFramework.RigLib)
+-- local DMG = require(LocalPlayer.PlayerScripts.CombatFramework.Particle.Damage)
 local cd = 0
 local Quest = require(game:GetService("ReplicatedStorage").Quests)
 local GuideModule = require(game:GetService("ReplicatedStorage").GuideModule)
@@ -1078,9 +1078,9 @@ elseif game.PlaceId == 4442272183 then
 elseif game.PlaceId == 7449423635 then
 	ThirdSea = true
 end
-if not shared.orl then shared.orl = RL.wrapAttackAnimationAsync end
-if not shared.cpc then shared.cpc = PC.play end
-if not shared.dnew then shared.dnew = DMG.new end
+-- if not shared.orl then shared.orl = RL.wrapAttackAnimationAsync end
+-- if not shared.cpc then shared.cpc = PC.play end
+-- if not shared.dnew then shared.dnew = DMG.new end
 for i,v in pairs(NPCList) do
 	local Model = v.Model
 	if Model:FindFirstChild("QuestFloor",true) then
@@ -1211,10 +1211,10 @@ function Maxincrement()
 	local maxincrement = #Rigc.activeController.anims.basic
 	return maxincrement
 end
-DMG.new = function(data)
-	data.Value = DamaageText[math.random(1,#DamaageText)]
-	return shared.dnew(data)
-end
+-- DMG.new = function(data)
+-- 	data.Value = DamaageText[math.random(1,#DamaageText)]
+-- 	return shared.dnew(data)
+-- end
 
 
 function Distance(POS)
@@ -1596,24 +1596,26 @@ spawn(function()
 					end
 				end
 			elseif LocalPlayer.Data.Level.Value >= 10 and LocalPlayer.Data.Level.Value <= 120 then
-				for i,v in pairs(workspace.Enemies:GetChildren()) do
-					if v.Name == "Shanda [Lv. 475]" and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then						
-						repeat wait()
-							BringMob(v)
-							EquipWeapon("Melee")
-							toTarget(v.HumanoidRootPart.CFrame * CFrame.new(0,50,0))
-							pcall(function()
-								Rigc.activeController:attack()
-							end)
-							v.HumanoidRootPart.CanCollide = false
-							v.HumanoidRootPart.Size = Vector3.new(70, 70, 70)
-							delay(10,function()
-								v.Humanoid.Health = 0
-							end)
-						until not scripts["AutoFarmLevel"] or v.Humanoid.Health <= 0 or not v.Parent
-					else
-						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(-7862, 5545, -381))
+				if game.Workspace.Enemies:FindFirstChild("Shanda [Lv. 475]") then
+					for i,v in pairs(game.Workspace.Enemies:GetChildren()) do
+						if v.Name == "Shanda [Lv. 475]" and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then						
+							repeat wait()
+								BringMob(v)
+								EquipWeapon("Melee")
+								toTarget(v.HumanoidRootPart.CFrame * CFrame.new(0,50,0))
+								pcall(function()
+									Rigc.activeController:attack()
+								end)
+								v.HumanoidRootPart.CanCollide = false
+								v.HumanoidRootPart.Size = Vector3.new(70, 70, 70)
+								delay(10,function()
+									v.Humanoid.Health = 0
+								end)
+							until not scripts["AutoFarmLevel"] or v.Humanoid.Health <= 0 or not v.Parent
+						end
 					end
+				else
+					game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(-7862, 5545, -381))
 				end
 			end
 		end
