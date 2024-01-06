@@ -1053,9 +1053,9 @@ end
 
 local LocalPlayer = game.Players.LocalPlayer
 local Rigc = getupvalue(require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework),2)
-local PC = require(LocalPlayer.PlayerScripts.CombatFramework.Particle)
-local RL = require(game:GetService("ReplicatedStorage").CombatFramework.RigLib)
-local DMG = require(LocalPlayer.PlayerScripts.CombatFramework.Particle.Damage)
+-- local PC = require(LocalPlayer.PlayerScripts.CombatFramework.Particle)
+-- local RL = require(game:GetService("ReplicatedStorage").CombatFramework.RigLib)
+-- local DMG = require(LocalPlayer.PlayerScripts.CombatFramework.Particle.Damage)
 local cd = 0
 local Quest = require(game:GetService("ReplicatedStorage").Quests)
 local GuideModule = require(game:GetService("ReplicatedStorage").GuideModule)
@@ -1078,9 +1078,9 @@ elseif game.PlaceId == 4442272183 then
 elseif game.PlaceId == 7449423635 then
 	ThirdSea = true
 end
-if not shared.orl then shared.orl = RL.wrapAttackAnimationAsync end
-if not shared.cpc then shared.cpc = PC.play end
-if not shared.dnew then shared.dnew = DMG.new end
+-- if not shared.orl then shared.orl = RL.wrapAttackAnimationAsync end
+-- if not shared.cpc then shared.cpc = PC.play end
+-- if not shared.dnew then shared.dnew = DMG.new end
 for i,v in pairs(NPCList) do
 	local Model = v.Model
 	if Model:FindFirstChild("QuestFloor",true) then
@@ -1216,17 +1216,16 @@ DMG.new = function(data)
 	return shared.dnew(data)
 end
 
-function spawncheck(Name)
-    return game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[Name].Part
-end
+
 function Distance(POS)
 	return LocalPlayer:DistanceFromCharacter(POS)
 end
 function totarget_spawn(CFgo,npc)
     local Dis = Distance(CFgo.Position)
     local Data = game:GetService("Players").LocalPlayer.Data
+	local PlayerSpawns = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[npc].Part
 
-    if not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
+    if not LocalPlayer.Character then return end
     if Dis < 1000 then
         Speed = 400
     elseif Dis >= 1000 then
@@ -1234,30 +1233,31 @@ function totarget_spawn(CFgo,npc)
     end
 
     getgenv().SpanwPass = false
-    getgenv().DistancePass = false
 
-    if Data.SpawnPoint.Value == spawncheck(npc) and Data.LastSpawnPoint.Value == spawncheck(npc) then
+    if Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
         getgenv().SpanwPass = true
     end
-    if game.PlaceId == 4442272183 and Distance(spawncheck(npc).Position) < 3000 then
-        getgenv().DistancePass = true
-    elseif game.PlaceId == 2753915549 and Distance(spawncheck(npc).Position) < 1500 then
-        getgenv().DistancePass = true
-    elseif game.PlaceId == 7449423635 and Distance(spawncheck(npc).Position) < 4500 then
-        getgenv().DistancePass = true
+    if game.PlaceId == 4442272183 and Distance(PlayerSpawns.Position) < 3000 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
+        getgenv().SpanwPass = true
+    elseif game.PlaceId == 2753915549 and Distance(PlayerSpawns.Position) < 1500 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
+        getgenv().SpanwPass = true
+    elseif game.PlaceId == 7449423635 and Distance(PlayerSpawns.Position) < 4500 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
+        getgenv().SpanwPass = true
     end
 
     if getgenv().SpanwPass == false then
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0,1000,0)
         game.Players.LocalPlayer.Character.Humanoid.Health = 0
         repeat task.wait()
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = spawncheck(npc).CFrame
-            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetLastSpawnPoint",spawncheck(npc))
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PlayerSpawns.CFrame
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetLastSpawnPoint",npc)
             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
-        until (Data.SpawnPoint.Value == spawncheck(npc) and Data.LastSpawnPoint.Value == spawncheck(npc))
+        until (Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc)
         getgenv().SpanwPass = true
     end
 
-    if getgenv().SpanwPass and getgenv().DistancePass then
+	
+    if getgenv().SpanwPass then
         if Dis > 430 then
             local tween_s = game:service"TweenService"
             local info = TweenInfo.new(Dis/Speed, Enum.EasingStyle.Linear)
@@ -1357,6 +1357,9 @@ function EquipWeapon(Tools)
 	elseif GetToolFromTip(Tools) then
 		game.Players.LocalPlayer.Character.Humanoid:EquipTool(GetToolFromTip(Tools))
 	end
+end
+isnetworkowner = function()
+	return true
 end
 function BringMob(mob)
 	local Mob = workspace.Enemies:GetChildren()
@@ -1560,9 +1563,9 @@ spawn(function()
 			if LocalPlayer.Data.Level.Value >= 1 and LocalPlayer.Data.Level.Value <= 10 then
 				if not LocalPlayer.PlayerGui.Main.Quest.Visible then
 					repeat task.wait()
-						totarget_spawn(CFrame.new(Vector3.new(Q.Npc)),"Default")
-					until Distance(CFrame.new(Q.Npc).Position) <= 120
-					if Distance(v.Model:FindFirstChild("QuestFloor",true).Position) <= 50 then
+						totarget_spawn(Q.Npc,"Default")
+					until Distance(Q.Npc.Position) <= 120
+					if Distance(Q.Npc.Position) <= 50 then
 						local args = {
 							[1] = "StartQuest",
 							[2] = Q.Name,
@@ -1659,7 +1662,7 @@ end)
 task.spawn(function()
 	game:GetService("RunService").Stepped:Connect(function()
 		pcall(function()
-			if _G.AutoKaitan then
+			if scripts["AutoFarmLevel"] then
 				if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
 					if not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyVelocity1") then
 						if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
