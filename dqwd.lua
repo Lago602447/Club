@@ -1216,15 +1216,14 @@ DMG.new = function(data)
 	return shared.dnew(data)
 end
 
-function spawncheck(Name)
-    return game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[Name].Part
-end
+
 function Distance(POS)
 	return LocalPlayer:DistanceFromCharacter(POS)
 end
 function totarget_spawn(CFgo,npc)
     local Dis = Distance(CFgo.Position)
     local Data = game:GetService("Players").LocalPlayer.Data
+	local PlayerSpawn = game:GetService("Workspace")["_WorldOrigin"].PlayerSpawns.Pirates[npc].Part
 
     if not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
     if Dis < 1000 then
@@ -1235,27 +1234,29 @@ function totarget_spawn(CFgo,npc)
 
     getgenv().SpanwPass = false
 
-    if Data.SpawnPoint.Value == spawncheck(npc) and Data.LastSpawnPoint.Value == spawncheck(npc) then
+    if Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
         getgenv().SpanwPass = true
     end
-    if game.PlaceId == 4442272183 and Distance(spawncheck(npc).Position) < 3000 and Data.SpawnPoint.Value == spawncheck(npc) and Data.LastSpawnPoint.Value == spawncheck(npc) then
+    if game.PlaceId == 4442272183 and Distance(PlayerSpawns.Position) < 3000 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
         getgenv().SpanwPass = true
-    elseif game.PlaceId == 2753915549 and Distance(spawncheck(npc).Position) < 1500 and Data.SpawnPoint.Value == spawncheck(npc) and Data.LastSpawnPoint.Value == spawncheck(npc) then
+    elseif game.PlaceId == 2753915549 and Distance(PlayerSpawns.Position) < 1500 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
         getgenv().SpanwPass = true
-    elseif game.PlaceId == 7449423635 and Distance(spawncheck(npc).Position) < 4500 and Data.SpawnPoint.Value == spawncheck(npc) and Data.LastSpawnPoint.Value == spawncheck(npc) then
+    elseif game.PlaceId == 7449423635 and Distance(PlayerSpawns.Position) < 4500 and Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc then
         getgenv().SpanwPass = true
     end
 
     if getgenv().SpanwPass == false then
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0,1000,0)
         game.Players.LocalPlayer.Character.Humanoid.Health = 0
         repeat task.wait()
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = spawncheck(npc).CFrame
-            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetLastSpawnPoint",spawncheck(npc))
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = PlayerSpawns.CFrame
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetLastSpawnPoint",npc)
             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
-        until (Data.SpawnPoint.Value == spawncheck(npc) and Data.LastSpawnPoint.Value == spawncheck(npc))
+        until (Data.SpawnPoint.Value == npc and Data.LastSpawnPoint.Value == npc)
         getgenv().SpanwPass = true
     end
 
+	
     if getgenv().SpanwPass then
         if Dis > 430 then
             local tween_s = game:service"TweenService"
